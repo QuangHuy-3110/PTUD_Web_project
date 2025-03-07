@@ -13,14 +13,6 @@ exports.create = async (req, res, next) => {
         return next(new ApiError(400, 'Mã sách không được bỏ trống'));
     }
 
-    if (!req.body?.ngaymuon){
-        return next(new ApiError(400, 'Ngày mượn không được bỏ trống'));
-    }
-
-    if (!req.body?.ngaytra){
-        return next(new ApiError(400, 'Ngày trả không được bỏ trống'));
-    }
-
     try {
         const theodoiService = new TheodoiService(MongoDB.client);        
         const document = await theodoiService.create(req.body);
@@ -40,13 +32,15 @@ exports.findAll = async (req, res, next) => {
         const {maDG} = req.query;
         const {maSach} = req.query;
         const {ngaymuon} = req.query;
+        const {trangthai} = req.query;
         if (maDG) {
             documents = await theodoiService.findByMaDG(maDG);
-        }        
-        else if (maSach) {
+        }else if (maSach) {
             documents = await theodoiService.findByMaSach(maSach);
         }else if (ngaymuon) {
             documents = await theodoiService.findByNgayMuon(ngaymuon);
+        } else if (trangthai) {
+            documents = await theodoiService.findByTrangthai(trangthai);
         } else{
             documents = await theodoiService.find({});
         }

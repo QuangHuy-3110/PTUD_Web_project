@@ -7,10 +7,11 @@
 
 <!-- Modal -->
 <div class="modal fade" :id="'profileModal' + this.user._id" tabindex="-1" role="dialog" :aria-labelledby="'profileModalLabel' + this.user._id" aria-hidden="true">
+    {{ console.log(user) }}
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" :id="'profileModalLabel' + this.user._id">User Profile</h5>
+                <h5 class="modal-title" :id="'profileModalLabel' + this.user._id">Hồ sơ</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -30,8 +31,8 @@
                             <div class="col-md-8">
                                 <div class="profile-head">
                                     
-                                    <h5>{{ user.tenNV }}</h5>
-                                    <h6>{{ user.chucvuNV }}</h6>
+                                    <h5>{{ user.tenDG }}</h5>
+                                    <h6>{{ user._id }}</h6>
                                     <ul class="nav nav-tabs" id="myTab" role="tablist">
                                         <li class="nav-item">
                                             <a class="nav-link active" id="home-tab" data-bs-toggle="tab" href="#home" role="tab">About</a>
@@ -46,19 +47,23 @@
                                         </div>
                                         <div class="row">
                                             <div class="col-md-6"><label>Họ và tên</label></div>
-                                            <div class="col-md-6"><p>{{ user.tenNV }}</p></div>
+                                            <div class="col-md-6"><p>{{ user.tenDG }}</p></div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6"><label>Ngày sinh</label></div>
+                                            <div class="col-md-6"><p>{{ user.ngaysinhDG }}</p></div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6"><label>Giới tính</label></div>
+                                            <div class="col-md-6"><p>{{ user.gioitinhDG }}</p></div>
                                         </div>
                                         <div class="row">
                                             <div class="col-md-6"><label>Địa chỉ</label></div>
-                                            <div class="col-md-6"><p>{{ user.diachiNV }}</p></div>
+                                            <div class="col-md-6"><p>{{ user.diachiDG }}</p></div>
                                         </div>
                                         <div class="row">
                                             <div class="col-md-6"><label>Điện thoại</label></div>
-                                            <div class="col-md-6"><p>{{ user.dienthoaiNV }}</p></div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-6"><label>Chức vụ</label></div>
-                                            <div class="col-md-6"><p>{{ user.chucvuNV }}</p></div>
+                                            <div class="col-md-6"><p>{{ user.dienthoaiDG }}</p></div>
                                         </div>
                                     </div>
                                 </div>
@@ -69,15 +74,15 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdropstaff">Edit Profile</button>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdropDG">Edit Profile</button>
                 
             </div>
         </div>
     </div>
 </div>
-<div  class="modal fade" id="staticBackdropstaff" data-bs-backdrop="true" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabelstaff" aria-hidden="true">
+<div  class="modal fade" id="staticBackdropDG" data-bs-backdrop="true" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabelDG" aria-hidden="true">
     <div  class="modal-dialog">
-        <EditStaff :nhanvien="this.user"/>
+        <EditUser :user="this.user"/>
     </div>
 </div>
 
@@ -87,10 +92,10 @@
 </template>
 
 <script>
-import EditStaff from './chillcomponents/EditStaff.vue';
+import EditUser from './chillcomponents/EditUser.vue';
     export default{
         components: {
-            EditStaff,
+            EditUser,
         },
         props:{
             user: {type: Object, required: true},

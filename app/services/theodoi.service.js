@@ -10,6 +10,7 @@ class TheodoiService {
             maSach: payload.maSach,
             maDG: payload.maDG,
             ngaymuon: payload.ngaymuon,
+            trangthai: payload.trangthai,
             ngaytra: payload.ngaytra,
         };
         // remove undefined fields
@@ -46,6 +47,12 @@ class TheodoiService {
     async findByMaSach(ma) {
         return await this.find({
             maSach: {$regex: new RegExp(new RegExp(ma)), $options: 'i'}
+        });
+    }
+
+    async findByTrangthai(tt) {
+        return await this.find({
+            trangthai: {$regex: new RegExp(new RegExp(tt)), $options: 'i'}
         });
     }
 

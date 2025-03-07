@@ -25,8 +25,8 @@
                             />
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <li><a class="dropdown-item btn btn-primary" data-bs-toggle="modal" data-bs-target="#profileModal">Hồ sơ</a></li>
-                            <li><a class="dropdown-item" href="#" @click="changePass" data-bs-toggle="modal" data-bs-target="#staticBackdropmk">Đổi mật khẩu</a></li>
+                            <li><a class="dropdown-item btn btn-primary" data-bs-toggle="modal" :data-bs-target="'#profileModal' + this.user._id">Hồ sơ</a></li>
+                            <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#staticBackdropmk">Đổi mật khẩu</a></li>
                             <li><a class="dropdown-item" href="#" @click="logout">Đăng xuất</a></li>
                         </ul>                        
                     </li>
@@ -108,7 +108,8 @@
                             <div class="accordion" id="accordionPanelsStayOpenExample">
                                 <ListBorrow
                                 :list= "this.list_borrow"
-                                v-model:activeIndex="activeIndex"/> 
+                                v-model:activeIndex="activeIndex"
+                                @update:theodoi_m="updateTTtheodoi"/> 
                             </div>
                         </div>
                     </div>
@@ -216,7 +217,7 @@ import nhanvienService from "@/services/nhanvien.service"
 
             async retrieveBorrow() {
                 try {
-                    this.list_borrow = await TheodoiService.getAll();
+                    this.list_borrow = await TheodoiService.get_trangthai('y');
                 } catch (error) {
                     console.log(error);
                 }
@@ -289,12 +290,16 @@ import nhanvienService from "@/services/nhanvien.service"
                 this.$router.push({ name: "loginform"})
             },
 
-            changePass(){
-
-            },
-
             async getUser(){
                 this.user = await nhanvienService.get(this.$route.query.id);
+            },
+
+            async updateTTtheodoi(data){
+                try {
+                    await TheodoiService.update(data._id, data)
+                } catch (error){
+                    console.log(error)
+                }
             },
 
             refreshList() {                

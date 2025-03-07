@@ -13,14 +13,6 @@ class DocgiaService {
         return str.substring(0, length);
     }
 
-    create_user (name, id){
-        const nameParts = name.trim().split(' ');
-        const firstNamePart = nameParts[0].toLowerCase();
-        const lastNamePart = nameParts[1] ? nameParts[1].toLowerCase() : ''; 
-        const loginName = firstNamePart + lastNamePart + id;
-        return loginName;
-    }
-
     extractDocgiaData(payload) {
         const docgia = {
             _id: payload._id,
@@ -29,7 +21,7 @@ class DocgiaService {
             gioitinhDG: payload.gioitinhDG,
             ngaysinhDG: payload.ngaysinhDG,
             dienthoaiDG: payload.dienthoaiDG,
-            taikhoanDG: this.create_user (payload.tenDG, payload._id),
+            taikhoanDG: payload._id,
             matkhauDG: this.create_pass(),
         };
         // remove undefined fields

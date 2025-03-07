@@ -13,14 +13,6 @@ class NhanvienService {
         return str.substring(0, length);
     }
 
-    create_user (name, id){
-        const nameParts = name.trim().split(' ');
-        const firstNamePart = nameParts[0].toLowerCase();
-        const lastNamePart = nameParts[1] ? nameParts[1].toLowerCase() : ''; 
-        const loginName = firstNamePart + lastNamePart + id;
-        return loginName;
-    }
-
     extractNhanvienData(payload) {
         const nhanvien = {
             _id: payload._id,
@@ -28,7 +20,7 @@ class NhanvienService {
             diachiNV: payload.diachiNV,
             chucvuNV: payload.chucvuNV,
             dienthoaiNV: payload.dienthoaiNV,
-            taikhoanNV: this.create_user (payload.tenNV, payload._id),
+            taikhoanNV: payload._id,
             matkhauNV: this.create_pass(),
         };
         // remove undefined fields
@@ -98,7 +90,7 @@ class NhanvienService {
             diachiNV: payload.diachiNV,
             chucvuNV: payload.chucvuNV,
             dienthoaiNV: payload.dienthoaiNV,
-            taikhoanNV: this.create_user (payload.tenNV, payload._id),
+            taikhoanNV: payload._id,
             matkhauNV: payload.matkhauNV,
         };
         const result = await this.Nhanvien.findOneAndUpdate(

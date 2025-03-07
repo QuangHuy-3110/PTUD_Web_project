@@ -23,7 +23,7 @@
         <p>Tài khoản: {{ element.taikhoanDG }}</p>
         <p>Mật khẩu: {{ element.matkhauDG }}</p>
       </div>
-      <button type="submit" class="btn btn-danger" @click="deleteuser(element)"> <i class="fas fa-edit"> </i>Xóa</button>      
+      <button type="submit" class="btn btn-danger m-3" @click="deleteuser(element)"> <i class="fas fa-edit"> </i>Xóa</button>      
     </div>    
   </div> 
   </form> 

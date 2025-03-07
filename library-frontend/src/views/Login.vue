@@ -32,10 +32,11 @@
                     const docgia = await DocgiaService.get_user(LoginForm.userInput);
                     const nhanvien = await NhanvienService.get_user(LoginForm.userInput);
                     // this.staff = nhanvien
-                    console.log(nhanvien)
+                    console.log(nhanvien[0])
+                    console.log(docgia[0])
                     if (docgia[0] !== undefined){
                         if(docgia[0].matkhauDG == LoginForm.passInput)
-                            this.$router.push({ name: "docgia"});
+                            this.$router.push({ name: "docgia", query: { id: docgia[0]._id } });
                     }else if(nhanvien[0] !== undefined){
                         if(nhanvien[0].matkhauNV == LoginForm.passInput)
                             this.$router.push({ name: "nhanvien", query: { id: nhanvien[0]._id } });

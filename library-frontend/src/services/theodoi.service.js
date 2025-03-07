@@ -21,9 +21,9 @@ class TheodoiService {
         return (await this.api.get(`/${id}`)).data;
     }
 
-    // async get_user(username) {
-    //     return (await this.api.get(`?taikhoanNV=${username}`)).data;
-    // }
+    async get_trangthai(tt) {
+        return (await this.api.get(`?trangthai=${tt}`)).data;
+    }
 
     async update(id, data) {
         return (await this.api.put(`/${id}`, data)).data;
