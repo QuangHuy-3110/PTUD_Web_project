@@ -7,7 +7,7 @@ class SachService {
 //    dinh ngia cac phuong thuc
     extractSachData(payload) {
         const sach = {
-            _id: payload.maSach,
+            _id: payload._id,
             tenSach: payload.tenSach,
             soquyenSach: payload.soquyenSach,
             namXB: payload.namXB,
@@ -27,7 +27,7 @@ class SachService {
         
         const result = await this.Sach.findOneAndUpdate(
             sach,
-            { $set: {soquyenSach: sach.soquyenSach = 0} },
+            { $set: sach },
             { returnDocument: 'after', upsert: true }
             );
         return result;

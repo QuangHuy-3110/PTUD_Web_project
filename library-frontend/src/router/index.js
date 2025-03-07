@@ -9,7 +9,7 @@ const routes = [
     },
 
     {
-        path: "/nhanvien",
+        path: "/nhanvien/",
         name: "nhanvien",
         component: () => import("@/views/Nhanvien.vue"),
     },
@@ -19,7 +19,7 @@ const routes = [
         name: "docgia",
         component: () => import("@/views/Docgia.vue"),
     },
-
+    
     {
         path: "/:pathMatch(.*)*",
         name: "notfound",

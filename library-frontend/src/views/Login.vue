@@ -8,15 +8,18 @@
     import LoginForm from "@/components/LoginForm.vue"
     import DocgiaService from "@/services/docgia.service";
     import NhanvienService from "@/services/nhanvien.service";
+    import Profile from "@/components/Profile.vue";
     export default {
         components: {
             LoginForm,
+            Profile,
         },
 
         data() {
             return {
                 server: null,
                 message: "",
+                // staff: {},
             };
         },
 
@@ -28,14 +31,14 @@
                 try {
                     const docgia = await DocgiaService.get_user(LoginForm.userInput);
                     const nhanvien = await NhanvienService.get_user(LoginForm.userInput);
-                    console.log(docgia[0])
+                    // this.staff = nhanvien
                     console.log(nhanvien)
                     if (docgia[0] !== undefined){
                         if(docgia[0].matkhauDG == LoginForm.passInput)
-                            this.$router.push({ name: "docgia" });
+                            this.$router.push({ name: "docgia"});
                     }else if(nhanvien[0] !== undefined){
                         if(nhanvien[0].matkhauNV == LoginForm.passInput)
-                            this.$router.push({ name: "nhanvien" });
+                            this.$router.push({ name: "nhanvien", query: { id: nhanvien[0]._id } });
                     }else {
                         alert("Sai ten dang nhap hoac mat khau")
                     }

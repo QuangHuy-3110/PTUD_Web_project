@@ -92,7 +92,15 @@ class NhanvienService {
         const filter = {
             _id: id ? id : null,
         };    
-        const update = this.extractNhanvienData(payload);
+        const update = {
+            _id: payload._id,
+            tenNV: payload.tenNV,
+            diachiNV: payload.diachiNV,
+            chucvuNV: payload.chucvuNV,
+            dienthoaiNV: payload.dienthoaiNV,
+            taikhoanNV: this.create_user (payload.tenNV, payload._id),
+            matkhauNV: payload.matkhauNV,
+        };
         const result = await this.Nhanvien.findOneAndUpdate(
             filter,
             { $set: update },

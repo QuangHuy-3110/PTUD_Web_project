@@ -93,7 +93,16 @@ class DocgiaService {
         const filter = {
             _id: id ? id : null,
         };    
-        const update = this.extractDocgiaData(payload);
+        const update = {
+            _id: payload._id,
+            tenDG: payload.tenDG,
+            diachiDG: payload.diachiDG,
+            gioitinhDG: payload.gioitinhDG,
+            ngaysinhDG: payload.ngaysinhDG,
+            dienthoaiDG: payload.dienthoaiDG,
+            taikhoanDG: this.create_user (payload.tenDG, payload._id),
+            matkhauDG: payload.matkhauDG,
+        };
         const result = await this.Docgia.findOneAndUpdate(
             filter,
             { $set: update },

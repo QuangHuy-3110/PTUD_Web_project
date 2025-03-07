@@ -7,7 +7,7 @@ class NXBService {
 //    dinh ngia cac phuong thuc
     extractNXBData(payload) {
         const nxb = {
-            _id: payload.maNXB,
+            _id: payload._id,
             tenNXB: payload.tenNXB,
             diachiNXB: payload.diachiNXB,
         };

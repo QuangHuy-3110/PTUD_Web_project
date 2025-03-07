@@ -1,46 +1,56 @@
 <template>
     <form class="row g-3">
-        <div class="col-md-6">
-            <label for="inputEmail4" class="form-label">Email</label>
-            <input type="email" class="form-control" id="inputEmail4">
+        <div class="col-md-3">
+            <label class="form-label" for="id">ID:</label>
+            <input type="text" id="id" class="form-control" placeholder="..." v-model="Localbook._id">
         </div>
         <div class="col-md-6">
-            <label for="inputPassword4" class="form-label">Password</label>
-            <input type="password" class="form-control" id="inputPassword4">
+            <label class="form-label" for="name">Tên sách</label>
+            <input type="text" id="name" class="form-control" placeholder="..." v-model="Localbook.tenSach">
         </div>
-        <div class="col-12">
-            <label for="inputAddress" class="form-label">Address</label>
-            <input type="text" class="form-control" id="inputAddress" placeholder="1234 Main St">
+        <div class="col-md-3">
+            <label class="form-label" for="tacgia">Tác giả</label>
+            <input type="text" class="form-control" id="tacgia" placeholder="..." v-model="Localbook.tacgia">
         </div>
-        <div class="col-12">
-            <label for="inputAddress2" class="form-label">Address 2</label>
-            <input type="text" class="form-control" id="inputAddress2" placeholder="Apartment, studio, or floor">
-        </div>
-        <div class="col-md-6">
-            <label for="inputCity" class="form-label">City</label>
-            <input type="text" class="form-control" id="inputCity">
+        <div class="col-md-5">
+            <label class="form-label" for="maNXB">Mã nhà xuất bản</label>
+            <input type="text" class="form-control" id="maNXB" placeholder="..." v-model="Localbook.maNXB">
         </div>
         <div class="col-md-4">
-            <label for="inputState" class="form-label">State</label>
-            <select id="inputState" class="form-select">
-            <option selected>Choose...</option>
-            <option>...</option>
-            </select>
+            <label class="form-label" for="born">Năm xuất bản</label>
+            <input type="date" id="born" class="form-control" v-model="Localbook.namXB">
         </div>
-        <div class="col-md-2">
-            <label for="inputZip" class="form-label">Zip</label>
-            <input type="text" class="form-control" id="inputZip">
-        </div>
+        
+        <div class="col-md-3">
+            <label for="number" class="form-label">Số quyển</label>
+            <input type="number" class="form-control" id="number" v-model="Localbook.soquyenSach">
+        </div>        
         <div class="col-12">
-            <div class="form-check">
-            <input class="form-check-input" type="checkbox" id="gridCheck">
-            <label class="form-check-label" for="gridCheck">
-                Check me out
-            </label>
-            </div>
-        </div>
-        <div class="col-12">
-            <button type="submit" class="btn btn-primary">Sign in</button>
+           <button type="submit" class="btn btn-primary" @click="submitBook">Thêm</button>
         </div>
     </form>
 </template>
+
+<script>
+
+    export default {
+        emits: ["submit:book"],
+        data() {
+            return{
+                Localbook : {
+                _id: "",
+                namXB: "",
+                soquyenSach: 0,
+                maNXB: "",
+                tenSach: "",
+                tacgia: ""
+                }
+            }            
+        },
+        methods:{
+            submitBook() {
+                this.$emit("submit:book", this.Localbook);
+            },
+        }
+    }
+</script>
