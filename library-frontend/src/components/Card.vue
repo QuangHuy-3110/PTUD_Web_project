@@ -28,6 +28,9 @@ export default {
         return {
             nxbService: nxbService,
             updatedSachs: [],
+            newMessage: '',
+            messages: [],
+            wsService: null
         };
     },
 
@@ -62,12 +65,9 @@ export default {
 
         muonSach(id){
             this.$emit("update:theodoi_y", id);
-        }
+        },
+
     },
-    // mounted() {
-    //     for (const book of this.sachs) {
-    //         book.tenNXB = this.getNameNXB(book.maNXB);
-    //     }
-    // }
+
 }
 </script>

@@ -9,6 +9,7 @@
     import DocgiaService from "@/services/docgia.service";
     import NhanvienService from "@/services/nhanvien.service";
     import Profile from "@/components/Profile.vue";
+    import bcrypt from 'bcryptjs';
     export default {
         components: {
             LoginForm,
@@ -31,14 +32,13 @@
                 try {
                     const docgia = await DocgiaService.get_user(LoginForm.userInput);
                     const nhanvien = await NhanvienService.get_user(LoginForm.userInput);
-                    // this.staff = nhanvien
-                    console.log(nhanvien[0])
-                    console.log(docgia[0])
                     if (docgia[0] !== undefined){
-                        if(docgia[0].matkhauDG == LoginForm.passInput)
+                        const isMatch = await bcrypt.compare(LoginForm.passInput, docgia[0].matkhauDG);
+                        if( isMatch)                            
                             this.$router.push({ name: "docgia", query: { id: docgia[0]._id } });
                     }else if(nhanvien[0] !== undefined){
-                        if(nhanvien[0].matkhauNV == LoginForm.passInput)
+                        const isMatch = await bcrypt.compare(LoginForm.passInput, nhanvien[0].matkhauNV);
+                        if( isMatch )                            
                             this.$router.push({ name: "nhanvien", query: { id: nhanvien[0]._id } });
                     }else {
                         alert("Sai ten dang nhap hoac mat khau")

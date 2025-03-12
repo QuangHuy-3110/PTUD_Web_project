@@ -28,14 +28,14 @@
           <a class="nav-link d-flex flex-column text-center active" aria-current="page" href="#" @click="nav_pick = 0"><i class="fas fa-home fa-lg my-2"></i><span class="small">Trang chủ</span></a>
         </li>
         <li class="nav-item" >
-          <a class="nav-link d-flex flex-column text-center active" aria-current="page" href="#"><i class="fa-solid fa-paper-plane"></i><span class="small">Yêu cầu</span></a>
+          <a class="nav-link d-flex flex-column text-center active" aria-current="page" href="#" @click="nav_pick = 1"><i class="fa-solid fa-paper-plane"></i><span class="small">Yêu cầu</span></a>
         </li>
         <li class="nav-item">
-          <a class="nav-link d-flex flex-column text-center" aria-current="page" href="#" @click="nav_pick = 1"><i class="fa-solid fa-book"></i><span class="small">Đang mượn</span></a>
+          <a class="nav-link d-flex flex-column text-center" aria-current="page" href="#" @click="nav_pick = 2"><i class="fa-solid fa-book"></i><span class="small">Đang mượn</span></a>
         </li>
 
         <li class="nav-item">
-          <a class="nav-link d-flex flex-column text-center" aria-current="page" href="#"><i class="fa-solid fa-clock"></i><span class="small">Lịch sử</span></a>
+          <a class="nav-link d-flex flex-column text-center" aria-current="page" href="#" @click="nav_pick = 3"><i class="fa-solid fa-clock"></i><span class="small">Lịch sử</span></a>
         </li>
         <!-- Dropdown -->
         <li class="nav-item dropdown">
@@ -88,8 +88,24 @@
 
       <div v-if="nav_pick === 1" class="accordion" id="accordionPanelsStayOpenExample">
         <div>
+          <ListBorrow            
+            :list= "list_y"
+            v-model:activeIndex="activeIndex"/>
+        </div>
+      </div>
+
+      <div v-if="nav_pick === 2" class="accordion" id="accordionPanelsStayOpenExample">
+        <div>
           <ListBorrow
-            :list= "this.list_m"
+            :list= "list_m"
+            v-model:activeIndex="activeIndex"/>
+        </div>
+      </div>
+
+      <div v-if="nav_pick === 3" class="accordion" id="accordionPanelsStayOpenExample">
+        <div>
+          <ListBorrow
+            :list= "list_t"
             v-model:activeIndex="activeIndex"/>
         </div>
       </div>
@@ -106,6 +122,7 @@
     import EditPassUser from "@/components/chillcomponents/EditPassUser.vue";
     import theodoiService from "@/services/theodoi.service";
     import ListBorrow from "@/components/ListBorrow.vue";
+    import WebSocketService from "@/services/websocket.service";
 // import ListBorrowUser from "@/components/ListBorrowUser.vue";
     export default {
         components: {
@@ -119,11 +136,15 @@
             return {
                 sachs:[],
                 activeIndex: -1,
-                message: "",
                 user: {},
                 nav_pick: 0,
                 list_m: [],
+                list_y:[],
+                list_t:[],
                 element:{},
+                message: '',
+                messages: [],
+                wsService: null,
             }
         },
 
@@ -152,7 +173,8 @@
                     ngaytra: null,
                     trangthai: 'y',
                   }
-                  await theodoiService.create(theodoi)
+                  let a = await theodoiService.create(theodoi)
+                  this.wsService.sendMessage(JSON.stringify(a));                  
                 } catch (error) {
                   console.log(error)
                 }
@@ -170,6 +192,28 @@
               }              
             },
 
+            async getList_y(){
+              try{
+                this.list_y = await theodoiService.get_trangthai('y')
+                this.list_y = this.list_y.filter(item => item.maDG === this.user._id)
+                console.log(this.list_y)
+              }catch (error){
+                console.log(error)
+                this.list_y = [];
+              }              
+            },
+
+            async getList_t(){
+              try{
+                this.list_t = await theodoiService.get_trangthai('t')
+                this.list_t = this.list_t.filter(item => item.maDG === this.user._id)
+                console.log(this.list_t)
+              }catch (error){
+                console.log(error)
+                this.list_t = [];
+              }              
+            },
+
             logout (){
               this.$router.push({name: "loginform"})
             },
@@ -182,14 +226,55 @@
               this.nav_pick = 0,
               this.element = {}
             },
+
+             // Kết nối WebSocket
+            connectWebSocket() {
+              this.wsService = new WebSocketService('ws://localhost:3001'); // URL của WebSocket server
+              this.wsService.connect(); // Mở kết nối WebSocket
+
+              // Đăng ký callback để nhận tin nhắn từ WebSocket server
+              this.wsService.onMessage((message) => {
+                this.messages.push(message); // Thêm tin nhắn vào mảng
+              });
+            },
+
+            // Gửi tin nhắn qua WebSocket
+            sendMessage() {
+              if (this.message) {
+                this.wsService.sendMessage(this.message); // Gửi tin nhắn
+                this.message = ''; // Xóa input sau khi gửi
+              }
+            }, 
         },
         mounted() {
-            this.getUser()
-            this.getList_m(),
-            this.laydulieu();
-            this.refreshList();
+          this.getUser()
+          this.getList_y()
+          this.getList_m(),
+          this.getList_t(),
+          this.laydulieu();
+          this.refreshList();
+          this.connectWebSocket();
         },
-    };
+
+        created() {
+          this.wsService = new WebSocketService('ws://localhost:3001');  // Khởi tạo kết nối
+          this.wsService.connect();  // Mở kết nối WebSocket
+          this.wsService.onopen = () => {
+              console.log('WebSocket connection established');
+          };
+          // Đăng ký để nhận thông tin từ WebSocket
+          this.wsService.onMessage((message) => {
+
+            this.messages.push(message);  // Cập nhật danh sách tin nhắn
+          });
+        },
+
+    beforeDestroy() {
+      if (this.wsService) {
+        this.wsService.close(); // Đóng kết nối WebSocket khi component bị huỷ
+      }
+    },
+  };
 </script>
 
 <style scoped>

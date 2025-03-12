@@ -37,7 +37,7 @@
 
 <script>
 import docgiaService from '@/services/docgia.service';
-
+import bcrypt from 'bcryptjs';
     export default {
         data(){
             return{
@@ -52,7 +52,8 @@ import docgiaService from '@/services/docgia.service';
         },
         methods:{   
             async checkpass (){
-                if(this.passOld !== this.nhanvienMK.matkhauDG){
+                const isMatch = await bcrypt.compare(this.passOld, this.nhanvienMK.matkhauDG);
+                if(!isMatch){
                     alert("Mật khẩu cũ không đúng");
                 }else if(this.passNew1 !== this.passNew2){
                     alert("Mật khẩu không trùng khớp")
