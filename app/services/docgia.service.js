@@ -1,19 +1,18 @@
 const { ObjectId } = require('mongodb');
+const bcrypt = require('bcryptjs');
 
 class DocgiaService {
     constructor(client) {
         this.Docgia = client.db().collection('docgia');
     }
-//    dinh ngia cac phuong thuc
-    create_pass (length = 6){
-        let str = "";
-        while (str.length < length) {
-            str += Math.random().toString(36).substring(2);
-        }
-        return str.substring(0, length);
+
+    async hashPassword(password) {
+        const salt = await bcrypt.genSalt(10); // Tạo salt với độ khó 10
+        const hashedPassword = await bcrypt.hash(password, salt); // Băm mật khẩu
+        return hashedPassword;
     }
 
-    extractDocgiaData(payload) {
+    async extractDocgiaData(payload) {
         const docgia = {
             _id: payload._id,
             tenDG: payload.tenDG,
@@ -22,7 +21,7 @@ class DocgiaService {
             ngaysinhDG: payload.ngaysinhDG,
             dienthoaiDG: payload.dienthoaiDG,
             taikhoanDG: payload._id,
-            matkhauDG: this.create_pass(),
+            matkhauDG: await this.hashPassword('1'),
         };
         // remove undefined fields
         Object.keys(docgia).forEach(
@@ -33,7 +32,7 @@ class DocgiaService {
 
     async create(payload) {
         
-        const docgia = this.extractDocgiaData(payload);
+        const docgia = await this.extractDocgiaData(payload);
         
         const result = await this.Docgia.findOneAndUpdate(
             docgia,
@@ -92,8 +91,7 @@ class DocgiaService {
             gioitinhDG: payload.gioitinhDG,
             ngaysinhDG: payload.ngaysinhDG,
             dienthoaiDG: payload.dienthoaiDG,
-            taikhoanDG: this.create_user (payload.tenDG, payload._id),
-            matkhauDG: payload.matkhauDG,
+            matkhauDG: await this.hashPassword(payload.matkhauDG),
         };
         const result = await this.Docgia.findOneAndUpdate(
             filter,

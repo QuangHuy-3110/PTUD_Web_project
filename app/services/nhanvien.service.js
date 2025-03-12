@@ -1,27 +1,29 @@
 const { ObjectId } = require('mongodb');
+const bcrypt = require('bcryptjs');
+
 
 class NhanvienService {
     constructor(client) {
         this.Nhanvien = client.db().collection('nhanvien');
     }
 //    dinh ngia cac phuong thuc
-    create_pass (length = 6){
-        let str = "";
-        while (str.length < length) {
-            str += Math.random().toString(36).substring(2);
-        }
-        return str.substring(0, length);
+
+    async hashPassword(password) {
+        const salt = await bcrypt.genSalt(10); // Tạo salt với độ khó 10
+        const hashedPassword = await bcrypt.hash(password, salt); // Băm mật khẩu
+        return hashedPassword;
     }
 
-    extractNhanvienData(payload) {
-        const nhanvien = {
+    async extractNhanvienData(payload) {
+        const mk = await this.hashPassword("1")
+         const nhanvien = {
             _id: payload._id,
             tenNV: payload.tenNV,
             diachiNV: payload.diachiNV,
             chucvuNV: payload.chucvuNV,
             dienthoaiNV: payload.dienthoaiNV,
             taikhoanNV: payload._id,
-            matkhauNV: this.create_pass(),
+            matkhauNV: mk,
         };
         // remove undefined fields
         Object.keys(nhanvien).forEach(
@@ -32,7 +34,7 @@ class NhanvienService {
 
     async create(payload) {
         
-        const nhanvien = this.extractNhanvienData(payload);
+        const nhanvien = await this.extractNhanvienData(payload);
         
         const result = await this.Nhanvien.findOneAndUpdate(
             nhanvien,
@@ -91,7 +93,7 @@ class NhanvienService {
             chucvuNV: payload.chucvuNV,
             dienthoaiNV: payload.dienthoaiNV,
             taikhoanNV: payload._id,
-            matkhauNV: payload.matkhauNV,
+            matkhauNV: await this.hashPassword(payload.matkhauNV),
         };
         const result = await this.Nhanvien.findOneAndUpdate(
             filter,
