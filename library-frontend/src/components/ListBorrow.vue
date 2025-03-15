@@ -1,7 +1,7 @@
 <template>
   <div 
     class="accordion-item"
-    v-for="(element, index) in update"
+    v-for="(element, index) in dl"
     :key="element._id"
     @click="updateActiveIndex(index)">
 
@@ -20,70 +20,110 @@
         <p>Trạng thái: <strong class="text-danger">{{ readTrangthai(element.trangthai) }}</strong></p>        
       </div>
       <div class="p-2">
-        <button type="button" class="btn btn-primary m-3" v-if="!element.ngaymuon && nhanvien === 1" @click="accept(element, 'm'), nav = 1">Chấp nhận</button>
-        <button type="button" class="btn btn-danger" v-if="!element.ngaymuon && nhanvien === 1" @click="accept(element, 'f'), nav = 1">Từ chối</button>
-        <button type="button" class="btn btn-danger m-3" v-if="element.ngaymuon && nhanvien === 1 && !element.ngaytra" @click="pay(element), nav = 1">Trả</button>
+        <button type="button" class="btn btn-primary m-3" v-if="!element.ngaymuon && nhanvien === 1" @click="accept(element)">Chấp nhận</button>
+        <button type="button" class="btn btn-danger" v-if="!element.ngaymuon && nhanvien === 1" @click="reject(element)">Từ chối</button>
+        <button type="button" class="btn btn-danger m-3" v-if="element.ngaymuon && nhanvien === 1 && !element.ngaytra" @click="pay(element)">Trả</button>
+        <button type="button" class="btn btn-danger m-3" v-if="!element.ngaymuon && nhanvien === 0" @click="cancel(element)">Hủy yêu cầu</button>
       </div>      
     </div>
   </div>
 </template>
 
 <script>
+import sachService from '@/services/sach.service';
 export default {
   props: {
     nhanvien: { type: Number, default: 0 },
     list: { type: Array, default: () => [] },
     activeIndex: { type: Number, default: -1 },
   },
-  emits: ["update:activeIndex", "update:theodoi", "update:theodoi_t", "update:list"],
+  emits: ["update:activeIndex", 
+          "update:theodoi", 
+          "update:theodoi_t", 
+          "update:list",
+          "update:sach_m",
+          "update:sach_t",
+          "cancel:yeucau",
+          "delete:theodoi"],
   data() {
     return {
-      dl: [...this.list],
-      nav: 0
+      dl: [...this.list], // Danh sách dữ liệu hiển thị
     };
   },
 
-  computed:{
-    update(){
-      if(this.nav===1)
-        return this.dl
-      if(this.dl.length === 0){
-        this.$emit("update:list", this.dl);
-      }
-      return [...this.list]
-    }
+  watch: {
+    // Cập nhật dl khi list thay đổi
+    list: {
+      handler(newValue) {
+        console.log("Danh sách mới:", newValue);
+        this.dl = [...newValue]; // Tạo bản sao, tránh thay đổi trực tiếp
+      },
+      deep: true,
+      immediate: true,
+    },
   },
-
   methods: {
     updateActiveIndex(index) {
       this.$emit("update:activeIndex", index);
     },
-    accept(element, char) {
-      element.trangthai = char;
-      let now = new Date();
-      element.ngaymuon = now.toLocaleDateString();
+
+    async accept(element) {
+      try{
+        let sach = await sachService.get(element.maSach)
+        if(sach.soquyenSach !== 0){
+          element.trangthai = "m"; // Đang mượn
+          element.ngaymuon = new Date().toLocaleDateString();
+          this.$emit("update:sach_m", element.maSach)
+          this.$emit("update:theodoi", element);
+          this.removeFromList(element._id);
+        }else{
+          alert(`Đã hết sách ${element.maSach}, không thể cho mượn!`)
+        }
+      }catch (error){
+        console.log(error)
+      }  
+    },
+
+    reject(element) {
+      element.trangthai = "f"; // Từ chối
       this.$emit("update:theodoi", element);
-      console.log(this.dl)
-      this.dl.splice(this.activeIndex, 1);
-      this.$emit("update:list", this.dl);
+      
+      this.removeFromList(element._id);
     },
+
     pay(element) {
-      element.trangthai = 't';
-      let now = new Date();
-      element.ngaytra = now.toLocaleDateString();
-      this.$emit("update:theodoi_t", element);
-      this.dl.splice(this.activeIndex, 1);
-      this.$emit("update:list", this.dl);
-    },
-    readTrangthai(data) {
-      if (data === "y") {
-        return "chờ duyệt!";
-      } else if (data === "m") {
-        return "đang mượn!";
-      } else if (data === "f") {
-        return "từ chối!";
+      try{
+        element.trangthai = "t"; // Đã trả
+        element.ngaytra = new Date().toLocaleDateString();
+        this.$emit("update:theodoi_t", element);
+        this.$emit("update:sach_t", element.maSach)
+        this.removeFromList(element._id);
+      }catch(error){
+        console.log(error)
       }
-      return "đã trả!";
+     
+    },
+
+    cancel (element){
+      element.trangthai = "huy"
+      this.$emit("cancel:yeucau", element)
+      this.removeFromList(element._id);
+      this.$emit("delete:theodoi", element._id)
+    },
+
+    removeFromList(id) {
+      // Xóa phần tử khỏi danh sách mà không làm mất dữ liệu
+      this.dl = this.dl.filter(item => item._id !== id);
+      this.$emit("update:list", this.dl); // Gửi danh sách mới lên component cha
+    },
+
+    readTrangthai(data) {
+      switch (data) {
+        case "y": return "chờ duyệt!";
+        case "m": return "đang mượn!";
+        case "f": return "từ chối!";
+        default: return "đã trả!";
+      }
     },
   },
 };

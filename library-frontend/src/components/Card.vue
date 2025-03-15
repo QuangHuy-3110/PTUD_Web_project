@@ -63,8 +63,8 @@ export default {
             }
         },
 
-        muonSach(id){
-            this.$emit("update:theodoi_y", id);
+        muonSach(book){            
+            this.$emit("update:theodoi_y", book);           
         },
 
     },

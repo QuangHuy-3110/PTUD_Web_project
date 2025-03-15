@@ -28,14 +28,14 @@
           <a class="nav-link d-flex flex-column text-center active" aria-current="page" href="#" @click="nav_pick = 0"><i class="fas fa-home fa-lg my-2"></i><span class="small">Trang chủ</span></a>
         </li>
         <li class="nav-item" >
-          <a class="nav-link d-flex flex-column text-center active" aria-current="page" href="#" @click="nav_pick = 1"><i class="fa-solid fa-paper-plane"></i><span class="small">Yêu cầu</span></a>
+          <a class="nav-link d-flex flex-column text-center active" aria-current="page" href="#" @click="nav_pick = 1, updateList_y"><i class="fa-solid fa-paper-plane"></i><span class="small">Yêu cầu</span></a>
         </li>
         <li class="nav-item">
-          <a class="nav-link d-flex flex-column text-center" aria-current="page" href="#" @click="nav_pick = 2"><i class="fa-solid fa-book"></i><span class="small">Đang mượn</span></a>
+          <a class="nav-link d-flex flex-column text-center" aria-current="page" href="#" @click="nav_pick = 2, updateList_m"><i class="fa-solid fa-book"></i><span class="small">Đang mượn</span></a>
         </li>
 
         <li class="nav-item">
-          <a class="nav-link d-flex flex-column text-center" aria-current="page" href="#" @click="nav_pick = 3"><i class="fa-solid fa-clock"></i><span class="small">Lịch sử</span></a>
+          <a class="nav-link d-flex flex-column text-center" aria-current="page" href="#" @click="nav_pick = 3, updateList_t"><i class="fa-solid fa-clock"></i><span class="small">Lịch sử</span></a>
         </li>
         <!-- Dropdown -->
         <li class="nav-item dropdown">
@@ -81,29 +81,35 @@
     <div style="margin-top: 150px;" class="container px-4 text-center">
       <div class="row gx-5" v-if="nav_pick === 0">
         <Card 
-        :sachs="sachs"
+        :sachs="getList_Sach"
         v-model:activeIndex="activeIndex"
         @update:theodoi_y="Addtheodoi"/>
       </div>
 
-      <div v-if="nav_pick === 1" class="accordion" id="accordionPanelsStayOpenExample">
+      <div v-if="nav_pick === 1" class="accordion border p-3 overflow-auto" id="accordionPanelsStayOpenExample" style="height: 600px;">
         <div>
+          <p v-if="list_y.length === 0"> Không có yêu cầu mượn nào!</p>
           <ListBorrow            
             :list= "list_y"
+            @update:list="update_y"
+            @cancel:yeucau="cancel"
+            @delete:theodoi="deleteTheoDoi"
             v-model:activeIndex="activeIndex"/>
         </div>
       </div>
 
-      <div v-if="nav_pick === 2" class="accordion" id="accordionPanelsStayOpenExample">
+      <div v-if="nav_pick === 2" class="accordion border p-3 overflow-auto" id="accordionPanelsStayOpenExample" style="height: 600px;">
         <div>
+          <p v-if="list_m.length === 0"> Không có sách nào đang mượn!</p>
           <ListBorrow
             :list= "list_m"
             v-model:activeIndex="activeIndex"/>
         </div>
       </div>
 
-      <div v-if="nav_pick === 3" class="accordion" id="accordionPanelsStayOpenExample">
+      <div v-if="nav_pick === 3" class="accordion border p-3 overflow-auto" id="accordionPanelsStayOpenExample" style="height: 600px;">
         <div>
+          <p v-if="list_t.length === 0"> Chưa mượn sách nào!</p>
           <ListBorrow
             :list= "list_t"
             v-model:activeIndex="activeIndex"/>
@@ -148,8 +154,115 @@
             }
         },
 
+        computed:{
+          updateList_y(){
+            this.getList_y()  
+          },
+
+          updateList_m(){
+            this.getList_m()  
+          },
+
+          updateList_t(){
+            this.getList_t()  
+          },
+
+          getList_Sach() {
+    try {
+        if (!this.messages || this.messages.length === 0) {
+            console.warn("Danh sách messages rỗng hoặc undefined:", this.messages);
+            return [];
+        }
+
+        // Duyệt qua từng tin nhắn và parse JSON nếu cần
+        this.messages = this.messages
+            .map((msg, index) => {
+                try {
+                    if (!msg) {
+                        console.warn(`Tin nhắn ở index ${index} bị undefined hoặc null`);
+                        return null;
+                    }
+
+                    // Nếu tin nhắn có dạng `{ message: 'Welcome to WebSocket server!' }`, bỏ qua
+                    if (typeof msg === "object" && msg.message === "Welcome to WebSocket server!") {
+                        console.warn(`Bỏ qua tin nhắn chào WebSocket ở index ${index}`);
+                        return null;
+                    }
+
+                    // Nếu msg đã là object hợp lệ (_id tồn tại), không cần parse nữa
+                    if (typeof msg === "object" && msg._id) {
+                        return msg;
+                    }
+
+                    // Nếu msg là chuỗi JSON, parse nó
+                    let parsedMsg = typeof msg === "string" ? JSON.parse(msg) : msg;
+
+                    // Nếu parsedMsg cũng đã là object hợp lệ (_id tồn tại), trả về luôn
+                    if (typeof parsedMsg === "object" && parsedMsg._id) {
+                        return parsedMsg;
+                    }
+
+                    // Nếu parsedMsg có 'message' là "Welcome to WebSocket server!", bỏ qua
+                    if (parsedMsg?.message === "Welcome to WebSocket server!") {
+                        console.warn(`Bỏ qua tin nhắn chào WebSocket ở index ${index}`);
+                        return null;
+                    }
+
+                    // Nếu parsedMsg có 'data', kiểm tra tiếp
+                    if (parsedMsg.data) {
+                        let parsedData = typeof parsedMsg.data === "string" ? JSON.parse(parsedMsg.data) : parsedMsg.data;
+
+                        // Bỏ qua tin nhắn có type === "ping"
+                        if (parsedData?.type === "ping") {
+                            console.log("Bỏ qua tin nhắn ping:", parsedData);
+                            return null;
+                        }
+
+                        return parsedData;
+                    }
+
+                    console.warn(`Tin nhắn không có thuộc tính 'data' ở index ${index}`, parsedMsg);
+                    return null;
+                          } catch (error) {
+                              console.error(`Lỗi khi phân tích JSON ở index ${index}:`, error);
+                              return null;
+                          }
+                      })
+                      .filter((item) => item !== null); // Loại bỏ giá trị null
+
+                  // Gộp với danh sách sách
+                  this.messages = this.sachs.concat(this.messages);
+
+                  // Xóa trùng lặp theo `_id`
+                  return Array.from(new Map(this.messages.map(item => [item._id, item])).values());
+
+              } catch (error) {
+                  console.error("Lỗi trong getList_Sach:", error);
+                  return [];
+              }
+          }
+        },
+
     // Đoạn mã xử lý đầy đủ sẽ trình bày bên dưới
         methods: {
+            update_y(list){
+              this.list_y = list
+            },
+
+            async deleteTheoDoi(id){
+              try {
+                console.log(id)
+                await theodoiService.delete(id)
+                this.getList_y()
+              }catch (error){
+                console.log(error)
+              }
+            },
+
+            cancel (element){
+              this.wsService.sendMessage(JSON.stringify(element));
+            },
+
             async laydulieu() {
               try {
                   this.sachs = await sachService.getAll();
@@ -163,22 +276,27 @@
               this.user = await docgiaService.get(this.$route.query.id);
             },
 
-            async Addtheodoi(book){
-              if(confirm(`Bạn có muốn mượn sách ${book._id}?`)){
-                try{
-                  const theodoi = {
-                    ngaymuon: null,
-                    maDG: this.user._id,
-                    maSach: book._id,
-                    ngaytra: null,
-                    trangthai: 'y',
+            async Addtheodoi(book){              
+                try{                  
+                  let temp1 = this.list_y.some(user => user.maSach === book._id);
+                  let temp2 = this.list_m.some(user => user.maSach === book._id);
+                  if(temp1 || temp2){
+                    alert("Bạn chỉ được mượn một cuốn sách")
                   }
-                  let a = await theodoiService.create(theodoi)
-                  this.wsService.sendMessage(JSON.stringify(a));                  
+                  else if(confirm(`Bạn có muốn mượn sách ${book._id}?`)){
+                    const theodoi = {
+                      ngaymuon: null,
+                      maDG: this.user._id,
+                      maSach: book._id,
+                      ngaytra: null,
+                      trangthai: 'y',
+                    }
+                    let a = await theodoiService.create(theodoi)
+                    this.wsService.sendMessage(JSON.stringify(a));
+                   }                   
                 } catch (error) {
                   console.log(error)
-                }
-              }
+                }             
             },
 
             async getList_m(){

@@ -49,11 +49,11 @@
                     <a href="#" class="list-group-item border-end-0 rounded-3 mt-2 d-inline-block text-truncate bg-white" @click="pick_nav = 2"><span>Thêm độc giả</span> </a>
                     <a href="#" class="list-group-item border-end-0 rounded-3 mt-2 d-inline-block text-truncate bg-white" @click="pick_nav = 3"><span>Thêm nhà xuất bản</span> </a>
                     <a href="#" class="list-group-item border-end-0 rounded-3 mt-2 d-inline-block text-truncate bg-white" @click="pick_nav = 4"><span>Xử lý yêu cầu mượn sách</span> </a>
-                    <a href="#" class="list-group-item border-end-0 rounded-3 mt-2 d-inline-block text-truncate bg-white" @click="pick_nav = 5"><span>Xem thông tin mượn sách</span> </a>                    
+                    <a href="#" class="list-group-item border-end-0 rounded-3 mt-2 d-inline-block text-truncate bg-white" @click="pick_nav = 5, updateList_m"><span>Xem thông tin mượn sách</span> </a>                    
                     <a href="#" class="list-group-item border-end-0 rounded-3 mt-2 d-inline-block text-truncate bg-white" @click="pick_nav = 6"><span>Xem thông tin độc giả</span> </a>                    
                     <a href="#" class="list-group-item border-end-0 rounded-3 mt-2 d-inline-block text-truncate bg-white" @click="pick_nav = 7"><span>Xem tất cả các sách</span> </a>
                     <a href="#" class="list-group-item border-end-0 rounded-3 mt-2 d-inline-block text-truncate bg-white" @click="pick_nav = 8"><span>Xem tất cả nhà xuất bản</span> </a>
-                    <a href="#" class="list-group-item border-end-0 rounded-3 mt-2 d-inline-block text-truncate bg-white" @click="pick_nav = 9"><span>Xem tất cả các sách đã trả</span> </a>
+                    <a href="#" class="list-group-item border-end-0 rounded-3 mt-2 d-inline-block text-truncate bg-white" @click="pick_nav = 9, updateList_t"><span>Xem tất cả các sách đã trả</span> </a>
                     <a href="#" class="list-group-item border-end-0 rounded-3 mt-2 d-inline-block text-truncate bg-success text-white p-3" @click="pick_nav = 0"><span>Làm mới</span> </a>
                 </div>
             </div>
@@ -61,13 +61,13 @@
         <main class="col ps-md-2 pt-2">
             <div class="row">
                 <div class="col-12">
-                    <div v-if="pick_nav === 1">
-                        <div>
-                            <h4> <strong>Thêm sách</strong> </h4>
-                            <hr>
-                            <AddBook @submit:book="createBook"/>
-                        </div>
+                    <div v-if="pick_nav === 1">  
+                        <h4><strong>Thêm sách</strong></h4>
+                        <hr>
+                        <AddBook @submit:book="createBook"/>
                     </div>
+
+
 
                     <div v-if="pick_nav === 2">
                         <div>
@@ -86,41 +86,53 @@
                     </div>
 
                     <div v-if="pick_nav === 4" >
-                        <div>
-                            <h4> <strong>Xử lý yêu cầu mượn sách </strong> </h4>
-                            <hr>
+                       <SearchBar
+                        name_tag="Xử lý yêu cầu mượn sách"
+                        v-model="searchText"/>  
+                        <hr>
+                        <div class="border p-3 overflow-auto"style="height: 600px;">
                             <div class="accordion" id="accordionPanelsStayOpenExample">
+                                <p v-if="messages.length === 0"> Không có yêu cầu nào!</p>
                                 <ListBorrow
                                 :nhanvien=1
                                 :list= "getList_y"
                                 v-model:activeIndex="activeIndex"
                                 @update:theodoi="updateTTtheodoi"
+                                @update:sach_m = "update_slSach_m"                                    
                                 @update:list="updateList_y"/> 
                             </div>
-                        </div>
+                        </div>                        
                     </div>
 
                     <div v-if="pick_nav === 5">
-                        <div>
-                            <h4> <strong>Xem thông tin mượn sách </strong> </h4>
-                            <hr>
+                        <SearchBar
+                        name_tag="Xem thông tin mượn sách"
+                        v-model="searchText"/>
+                        <hr>
+                        <div class="border p-3 overflow-auto"style="height: 600px;">
                             <div class="accordion" id="accordionPanelsStayOpenExample">
+                                <p v-if="list_m.length === 0"> Không có sách nào đang cho mượn!</p>
                                 <ListBorrow
+                                v-if="filteredTimKiemCount > 0"
                                 :nhanvien=1
-                                v-model:list= "updateList_m"
+                                v-model:list= "filteredTimkiem"
                                 v-model:activeIndex="activeIndex"
+                                @update:sach_t = "update_slSach_t"
                                 @update:theodoi_t="updateTTtheodoi_t"/> 
                             </div>
                         </div>
                     </div>                    
 
                     <div v-if="pick_nav === 6">
-                        <div>
-                            <h4> <strong>Xem thông tin đọc giả</strong> </h4>
-                            <hr>
+                        <SearchBar
+                        name_tag="Xem thông tin đọc giả"
+                        v-model="searchText"/>
+                        <hr>
+                        <div class="border p-3 overflow-auto"style="height: 600px;">
                             <div class="accordion" id="accordionPanelsStayOpenExample">
                                 <ListUser
-                                :list= "this.list_user"
+                                v-if="filteredTimKiemCount > 0"
+                                :list= "filteredTimkiem"
                                 v-model:activeIndex="activeIndex"
                                 @delete:user="deleteUser"/>
                             </div>
@@ -128,12 +140,15 @@
                     </div>
 
                     <div v-if="pick_nav === 7">
-                        <div>
-                            <h4> <strong>Xem tất cả sách</strong> </h4>
-                            <hr>
+                        <SearchBar
+                        name_tag="Xem tất cả sách"
+                        v-model="searchText"/>
+                        <hr>
+                        <div class="border p-3 overflow-auto"style="height: 600px;">
                             <div class="accordion" id="accordionPanelsStayOpenExample">
                                 <ListBook
-                                :list= "this.list_book"
+                                v-if="filteredTimKiemCount > 0"
+                                :list= "filteredTimkiem"
                                 v-model:activeIndex="activeIndex"
                                 @delete:book="deleteBook"/>
                             </div>
@@ -141,26 +156,32 @@
                     </div>  
 
                     <div v-if="pick_nav === 8">
-                        <div>
-                            <h4> <strong>Xem tất cả nhà xuất bản</strong> </h4>
-                            <hr>
+                        <SearchBar
+                        name_tag="Xem tất cả nhà xuất bản"
+                        v-model="searchText"/>
+                        <hr>
+                        <div class="border p-3 overflow-auto"style="height: 600px;">
                             <div class="accordion" id="accordionPanelsStayOpenExample">
                                 <ListNXB
-                                :list= "this.list_nxb"
+                                v-if="filteredTimKiemCount > 0"
+                                :list= "filteredTimkiem"
                                 v-model:activeIndex="activeIndex"
                                 @delete:nxb="deleteNXB"/>
                             </div>
                         </div>
                     </div>  
 
-                    <div v-if="pick_nav === 9">
-                        <div data-bs-spy="scroll" data-bs-target="#list-example" data-bs-smooth-scroll="true" class="scrollspy-example" tabindex="0">
-                            <h4> <strong>Xem thông tin mượn sách </strong> </h4>
-                            <hr>
+                    <div v-if="pick_nav === 9">       
+                        <SearchBar
+                        name_tag="Xem tất cả các sách đã trả"
+                        v-model="searchText"/>     
+                        <hr>      
+                        <div class="border p-3 overflow-auto"style="height: 600px;">                  
                             <div class="accordion" id="accordionPanelsStayOpenExample">
                                 <ListBorrow
+                                v-if="filteredTimKiemCount > 0"
                                 :nhanvien=1
-                                :list= "this.list_t"
+                                :list= "filteredTimkiem"
                                 v-model:activeIndex="activeIndex"/> 
                             </div>
                         </div>
@@ -183,6 +204,7 @@
     import AddBook from "@/components/AddBook.vue"
     import Profile from "@/components/Profile.vue"
     import AddNXB from "@/components/AddNXB.vue"
+    import SearchBar from "@/components/SearchBar.vue"
 
     import NXBService from "@/services/nxb.service"
     import DocgiaService from "@/services/docgia.service";
@@ -193,6 +215,7 @@
 // import { json } from "express/lib/response"
     export default {
         components: { 
+            SearchBar,
             EditPass,
             ListNXB,
             ListBook,
@@ -220,92 +243,205 @@
                 count: 0,
                 newMessage: '',
                 messages: [],
-                wsService: null
+                wsService: null,
+                isUpdated: false,
+                searchText: "",                
+                searchStrings: [],  
             };
         },
-        // computed: {
-        //     updateList_m(){
-        //         for (element in this.list_y){
-        //             if(element.trangthai==='m'){
-        //                 this.list_m.push(element)
-        //             }
-        //         }
-        //         return this.list_m
-        //     },
-            // watch:{
-            //     list_y(newValue, oldValue){
-            //         this.list_y = [...newValue, ...oldValue].reduce((acc, current) => {
-            //             // Kiểm tra nếu đối tượng với 'id' đã tồn tại trong mảng kết quả
-            //             if (!acc.some(item => item._id === current._id)) {
-            //                 acc.push(current);
-            //             }
-            //             return acc;
-            //         }, []);
-            //     }
-            // },
 
-           computed: {            
-    getList_y() {
-    try {
-        if (!this.messages || this.messages.length === 0) {
-            console.warn("Danh sách messages rỗng hoặc undefined:", this.messages);
-            return [];
-        }  
+        watch: {
+            searchText() {
+                this.activeIndex = -1;
+            },
 
-        return this.messages
-            .map((msg, index) => {
-                try {
-                    if (!msg) {
-                        console.warn(`Tin nhắn ở index ${index} bị undefined hoặc null`);
-                        return null;
-                    }
+            getList_y: {
+                handler(newList) {
+                    this.list_y = newList;
+                },
+                deep: true, // Theo dõi mảng con
+                immediate: true // Cập nhật ngay khi component load
+            }
+        },
 
-                    // Kiểm tra nếu msg đã là Object, không cần parse
-                    let parsedMsg = typeof msg === "string" ? JSON.parse(msg) : msg;
+        
+        computed: {            
 
-                    // Kiểm tra nếu parsedMsg có thuộc tính 'data'
-                    if (!parsedMsg.data) {
-                        console.log(`Tin nhắn không có thuộc tính 'data' ở index ${index}`, parsedMsg);
-                        return null;
-                    }
-
-                    // Kiểm tra nếu parsedMsg.data là Object trước khi truy cập .type
-                    if (parsedMsg.data && parsedMsg.data.type === "ping") {
-                        console.log("Bỏ qua tin nhắn ping:", parsedMsg.data);
-                        return null;
-                    }
-
-                    // Nếu data đã là Object, không cần parse
-                    return typeof parsedMsg.data === "string" ? JSON.parse(parsedMsg.data) : parsedMsg.data;
-                } catch (error) {
-                    console.error(`Lỗi khi phân tích JSON ở index ${index}:`, error);
-                    return null;
+            // Chuyển các đối tượng contact thành chuỗi để tiện cho tìm kiếm.
+            TimKiemStrings() {
+                switch(this.pick_nav){
+                case 5:
+                        return this.list_m.map((timkiem) => {
+                        const { maSach, maDG, trangthai, ngaytra, ngaymuon } = timkiem;
+                        return [maSach, maDG, trangthai, ngaytra, ngaymuon].join("");
+                    });
+                case 6:
+                    return this.list_user.map((timkiem) => {
+                        const { _id, dienthoaiDG, diachiDG, tenDG, ngaysinhDG, gioitinhDG } = timkiem;
+                        return [_id, dienthoaiDG, diachiDG, tenDG, ngaysinhDG, gioitinhDG].join("");
+                    });
+                case 7:
+                    return this.list_book.map((timkiem) => {
+                        const { _id, maNXB, soquyenSach, tacgia, tenSach, namNXB } = timkiem;
+                        return [_id, maNXB, soquyenSach, tacgia, tenSach, namNXB].join("");
+                    });
+                case 8:
+                    return this.list_nxb.map((timkiem) => {
+                        const { _id, tenNXB, diachiNXB } = timkiem;
+                        return [_id, tenNXB, diachiNXB].join("");
+                    });
+                case 9:
+                    return this.list_t.map((timkiem) => {
+                        const { maSach, maDG, trangthai, ngaytra, ngaymuon } = timkiem;
+                        return [maSach, maDG, trangthai, ngaytra, ngaymuon].join("");
+                    });
+                default: return [];          
                 }
-            })
-            .filter((item) => item !== null);
-            
-        // Cập nhật list_y trực tiếp và loại bỏ đối tượng trùng lặp
-            // return [...this.list_y, ...a].reduce((acc, current) => {
-            //     // Kiểm tra nếu đối tượng với 'id' đã tồn tại trong mảng kết quả
-            //     if (!acc.some(item => item._id === current._id)) {
-            //         acc.push(current);
-            //     }
-            //     return acc;
-            // }, []);        
-        // return this.list_y; // Trả về list_y đã được cập nhật
-        } catch (error) {
-            console.error("Lỗi trong getList_y:", error);
-            return [];
-        }
-    }
+            },
+            // Trả về các contact có chứa thông tin cần tìm kiếm.
+            filteredTimkiem() {
+                switch(this.pick_nav){
+                case 5:
+                    if (!this.searchText) return this.list_m;
+                    return this.list_m.filter((_timkiem, index) =>
+                        this.TimKiemStrings[index]?.includes(this.searchText)
+                    );
+                case 6:
+                    if (!this.searchText) return this.list_user;
+                    return this.list_user.filter((_timkiem, index) =>
+                        this.TimKiemStrings[index].includes(this.searchText)
+                    );
 
-},
+                case 7:
+                    if (!this.searchText) return this.list_book;
+                    return this.list_book.filter((_timkiem, index) =>
+                        this.TimKiemStrings[index].includes(this.searchText)
+                    );
+
+                case 8:
+                    if (!this.searchText) return this.list_nxb;
+                    return this.list_nxb.filter((_timkiem, index) =>
+                        this.TimKiemStrings[index].includes(this.searchText)
+                    );
+                case 9:
+                    if (!this.searchText) return this.list_t;
+                    return this.list_t.filter((_timkiem, index) =>
+                        this.TimKiemStrings[index].includes(this.searchText)
+                    );
+                    default: return [];
+                }
+            },
+
+            activeTimKiem() {
+                if (this.activeIndex < 0) return null;
+                return this.filteredTimkiem[this.activeIndex];
+            },
+
+            filteredTimKiemCount() {
+                return this.filteredTimkiem ? this.filteredTimkiem.length : 0;
+            },
+
+
+            updateList_m(){
+                this.getList_m()  
+            },
+
+            updateList_t(){
+                this.getList_t()  
+            },
+        
+            getList_y() {
+                try {
+                    if (!this.messages || this.messages.length === 0) {
+                        return [];
+                    }
+
+                    // Parse JSON và lọc tin nhắn hợp lệ
+                    let parsedMessages = this.messages
+                        .map((msg) => {
+                            try {
+                                if (!msg) return null;
+                                
+                                let parsedMsg = typeof msg === "string" ? JSON.parse(msg) : msg;
+                                let data = parsedMsg?.data ? JSON.parse(parsedMsg.data) : parsedMsg;
+
+                                // Loại bỏ tin nhắn có nội dung "Welcome to WebSocket server!"
+                                if (data?.message === "Welcome to WebSocket server!") {
+                                    return null;
+                                }
+
+                                return data;
+                            } catch (error) {
+                                return null;
+                            }
+                        })
+                        .filter((item) => item !== null); // Loại bỏ giá trị null
+
+                    return this.removeIfCancelled(parsedMessages);
+                } catch (error) {
+                    console.error("Lỗi trong getList_y:", error);
+                    return [];
+                }
+            }
+        },
 
      
         methods: {
+
+            async update_y(){
+                try{
+                    if(!this.isUpdated)
+                    this.messages = await TheodoiService.get_trangthai('y')
+                }catch (error){
+                    console.log(error)
+                }                
+            }, 
+
+            removeIfCancelled(arr) {
+                // Bước 1: Nhóm phần tử theo id
+                const grouped = new Map();
+
+                arr.forEach(item => {
+                    if (!grouped.has(item._id)) {
+                        grouped.set(item._id, []);
+                    }
+                    grouped.get(item._id).push(item);
+                });
+
+                // Bước 2: Lọc bỏ nhóm có trạng thái "hủy"
+                const filtered = [...grouped.values()].filter(group => 
+                    !group.some(item => item.trangthai === "huy")
+                );
+
+                // Bước 3: Trả về danh sách hợp lệ (flatten array)
+                return filtered.flat();
+            },
+
+            async update_slSach_t(id){
+                try{
+                    console.log(id)
+                    let Sach = await SachService.get(id);
+                    Sach.soquyenSach = Sach.soquyenSach + 1;
+                    await SachService.update(id, Sach)
+                    this.wsService.sendMessage(JSON.stringify(Sach));
+                }catch(error) {
+                    console.log(error)
+                }
+            },
+
+            async update_slSach_m(id){
+                try{
+                    let Sach = await SachService.get(id);
+                    Sach.soquyenSach = Sach.soquyenSach - 1;
+                    await SachService.update(id, Sach)
+                    this.wsService.sendMessage(JSON.stringify(Sach));
+                }catch(error) {
+                    console.log(error)
+                }
+            },
+
             updateList_y(list){
-                this.messages = list 
-                // this.messages = []           
+                this.messages = list         
             },
 
             async retrieveBooks() {
@@ -323,17 +459,6 @@
                     console.log(error);
                 }
             },
-
-            // async retrieveBorrow() {
-            //     try {
-            //         this.wsService.onMessage((message) => {
-            //             const parsedMessage = JSON.parse(message);
-            //             this.messages.push(parsedMessage);
-            //         });
-            //     } catch (error) {
-            //         console.log(error);
-            //     }
-            // },
 
             async getList_m() {
                 try {
@@ -461,9 +586,21 @@
             },
         },
 
-        
+        mounted() {       
+                this.getUser()  
+               this.getList_t() 
+               this.getList_m()  
+               this.update_y()        
+                this.retrieveBooks()
+                this.retrieveUser()
+                // this.retrieveBorrow()
+                this.retrieveNXB()
+                this.refreshList();    
+        },
+
         created() {
             try {
+                
                 this.wsService = new WebSocketService('ws://localhost:3001');  // Khởi tạo kết nối
                 this.wsService.connect();  // Mở kết nối WebSocket
                 // console.log(this.messages)
@@ -472,7 +609,7 @@
                     console.log('WebSocket connection established');
                 };
                 this.wsService.addListener(this.onMessageReceived);
-                this.wsService.onMessage((message) => {
+                this.wsService.onMessage((message) =>  {
                     console.log("Received message:",message);
                     this.messages.push(message);  // Cập nhật danh sách tin nhắn
                 });
@@ -481,16 +618,6 @@
             }
         },
 
-        mounted() {       
-                this.getUser()  
-               this.getList_t() 
-               this.getList_m()          
-                this.retrieveBooks()
-                this.retrieveUser()
-                // this.retrieveBorrow()
-                this.retrieveNXB()
-                this.refreshList();    
-        },
         beforeDestroy() {
     // Đảm bảo đóng kết nối khi component bị huỷ
             if (this.wsService) {
