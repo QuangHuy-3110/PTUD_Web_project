@@ -27,15 +27,7 @@
 </template>
 
 <script>
-// import { Form} from "vee-validate";
 export default {    
-    // components: {
-    //     Form,
-    // },
-    // props: {
-    //     formValue: { type: Object, required: false },
-    // },
-
     emits: ["submit:form"],
 
     data(){

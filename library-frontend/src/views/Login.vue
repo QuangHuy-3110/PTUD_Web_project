@@ -5,6 +5,8 @@
     </div>
 </template>
 <script>
+    import { useRouter } from "vue-router";
+    import { useAuthStore } from "@/stores/authStore";
     import LoginForm from "@/components/LoginForm.vue"
     import DocgiaService from "@/services/docgia.service";
     import NhanvienService from "@/services/nhanvien.service";
@@ -20,7 +22,8 @@
             return {
                 server: null,
                 message: "",
-                // staff: {},
+                router: useRouter(),
+                authStore: useAuthStore(),
             };
         },
 
@@ -34,12 +37,21 @@
                     const nhanvien = await NhanvienService.get_user(LoginForm.userInput);
                     if (docgia[0] !== undefined){
                         const isMatch = await bcrypt.compare(LoginForm.passInput, docgia[0].matkhauDG);
-                        if( isMatch)                            
-                            this.$router.push({ name: "docgia", query: { id: docgia[0]._id } });
-                    }else if(nhanvien[0] !== undefined){
+                        if( isMatch){
+                            this.authStore.setUser({ id: docgia[0]._id});
+                            sessionStorage.setItem("userId", docgia[0]._id);
+                            this.router.replace({ name: "docgia" });
+                        }                            
+                            // this.$router.push({ name: "docgia", query: { id: docgia[0]._id } });
+
+                    }else if(nhanvien[0]){
                         const isMatch = await bcrypt.compare(LoginForm.passInput, nhanvien[0].matkhauNV);
-                        if( isMatch )                            
-                            this.$router.push({ name: "nhanvien", query: { id: nhanvien[0]._id } });
+                        if( isMatch ){
+                            this.authStore.setUser({ id: nhanvien[0]._id});
+                            sessionStorage.setItem("userId", nhanvien[0]._id);
+                            this.router.replace({ name: "nhanvien" });
+                        }                            
+                            // this.$router.push({ name: "nhanvien", query: { id: nhanvien[0]._id } });
                     }else {
                         alert("Sai ten dang nhap hoac mat khau")
                     }

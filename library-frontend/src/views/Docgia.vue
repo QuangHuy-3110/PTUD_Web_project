@@ -155,6 +155,7 @@
                 messages: [],
                 searchText: "",
                 wsService: null,
+                role: "",
             }
         },
 
@@ -301,7 +302,8 @@
                 this.messages = this.sachs.concat(this.messages);
 
                 // Xóa trùng lặp theo `_id`
-                return Array.from(new Map(this.messages.map(item => [item._id, item])).values());
+                let parsedMessages = Array.from(new Map(this.messages.map(item => [item._id, item])).values());
+                return this.removeIfCancelled(parsedMessages);
 
             } catch (error) {
                 console.error("Lỗi trong getList_Sach:", error);
@@ -313,6 +315,27 @@
 
     // Đoạn mã xử lý đầy đủ sẽ trình bày bên dưới
         methods: {
+
+          removeIfCancelled(arr) {
+                // Bước 1: Nhóm phần tử theo id
+                const grouped = new Map();
+
+                arr.forEach(item => {
+                    if (!grouped.has(item._id)) {
+                        grouped.set(item._id, []);
+                    }
+                    grouped.get(item._id).push(item);
+                });
+
+                // Bước 2: Lọc bỏ nhóm có trạng thái "hủy"
+                const filtered = [...grouped.values()].filter(group => 
+                    !group.some(item => item.trangthai === "huy")
+                );
+
+                // Bước 3: Trả về danh sách hợp lệ (flatten array)
+                return filtered.flat();
+            },
+
             update_y(list){
               this.list_y =  list
             },
@@ -341,7 +364,11 @@
             },
 
             async getUser(){
-              this.user = await docgiaService.get(this.$route.query.id);
+              this.user = await docgiaService.get(sessionStorage.getItem("userId"));  
+              if (!this.user) {
+                this.$router.replace({ name: "login" });
+              }
+              this.role = this.$route.name === "docgia" ? "Độc giả" : "Nhân viên";
             },
 
             async Addtheodoi(book){              
@@ -447,7 +474,7 @@
         },
 
         created() {
-          this.wsService = new WebSocketService('ws://localhost:3001');  // Khởi tạo kết nối
+          this.wsService = new WebSocketService('ws://localhost:3001/');  // Khởi tạo kết nối
           this.wsService.connect();  // Mở kết nối WebSocket
           this.wsService.onopen = () => {
               console.log('WebSocket connection established');

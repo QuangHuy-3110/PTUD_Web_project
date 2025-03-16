@@ -42,11 +42,10 @@
         </div>
         <div class="modal-body">
           <!-- Chỉ hiển thị khi có dữ liệu sách -->
-          <EditBook :book="book" v-if="book && book._id" />
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-          <button type="button" class="btn btn-primary">Lưu thay đổi</button>
+          <EditBook 
+          :book="book" 
+          v-if="book && book._id" 
+          @send:book="sendBook"/>
         </div>
       </div>
     </div>
@@ -55,7 +54,6 @@
 
 <script>
   import EditBook from './chillcomponents/EditBook.vue';
-
   export default {
     components: {
       EditBook,
@@ -72,7 +70,7 @@
       activeIndex: { type: Number, default: -1 },
     },
 
-    emits: ["update:activeIndex", "delete:book"],
+    emits: ["update:activeIndex", "delete:book", "send:book"],
 
     methods: {
       // Cập nhật index của item được chọn
@@ -88,6 +86,10 @@
       // Gọi sự kiện xóa sách
       getdelete(element) {
         this.$emit("delete:book", element);
+      },
+
+      sendBook(book){
+        this.$emit("send:book", book)
       }
     },
   };

@@ -1,5 +1,9 @@
 import { createWebHistory, createRouter } from "vue-router";
+import { useAuthStore } from '@/stores/authStore';
 import Login from "@/views/Login.vue";
+import Docgia from "@/views/Docgia.vue";
+import Nhanvien from "@/views/Nhanvien.vue";
+import NotFound from "@/views/NotFound.vue";
 
 const routes = [
     {
@@ -11,19 +15,21 @@ const routes = [
     {
         path: "/nhanvien/",
         name: "nhanvien",
-        component: () => import("@/views/Nhanvien.vue"),
+        component: Nhanvien,
+        meta: { requiresAuth: true },
     },
 
     {
         path: "/docgia",
         name: "docgia",
-        component: () => import("@/views/Docgia.vue"),
+        component: Docgia,
+        meta: { requiresAuth: true },
     },
     
     {
         path: "/:pathMatch(.*)*",
         name: "notfound",
-        component: () => import("@/views/NotFound.vue"),
+        component: NotFound,
     },
 
 ];
@@ -31,6 +37,17 @@ const routes = [
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes,
+});
+
+router.beforeEach((to, from, next) => {
+  const authStore = useAuthStore();
+  
+  if (to.meta.requiresAuth && !authStore.user) {
+    // Nếu trang yêu cầu đăng nhập nhưng người dùng chưa đăng nhập, chuyển hướng về trang login
+    next({ name: 'loginform' });
+  } else {
+    next(); // Nếu không có yêu cầu đăng nhập hoặc người dùng đã đăng nhập, tiếp tục
+  }
 });
 
 export default router;

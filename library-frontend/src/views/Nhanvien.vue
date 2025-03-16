@@ -45,7 +45,7 @@
         <div class="col-2 px-2 bg-dark-subtle ">
             <div id="sidebar" class="collapse collapse-horizontal show border-end bg-secondary-subtle" >
                 <div id="sidebar-nav" class="list-group border-0 rounded-0 text-sm-start min-vh-100 ">
-                    <a href="#" class="list-group-item border-end-0 rounded-3 mt-2 d-inline-block text-truncate bg-white" @click="pick_nav=11, updateList_staff " v-if="user.chucvuNV === 'Giám đốc'"><span>Xem nhân viên</span> </a>
+                    <a href="#" class="list-group-item border-end-0 rounded-3 mt-2 d-inline-block text-truncate bg-white" @click="pick_nav=11" v-if="user.chucvuNV === 'Giám đốc'"><span>Xem nhân viên</span> </a>
                     <a href="#" class="list-group-item border-end-0 rounded-3 mt-2 d-inline-block text-truncate bg-white" @click="pick_nav=10" v-if="user.chucvuNV === 'Giám đốc'"><span>Thêm nhân viên</span> </a>
                     <a href="#" class="list-group-item border-end-0 rounded-3 mt-2 d-inline-block text-truncate bg-white" @click="pick_nav=1"><span>Thêm sách</span> </a>
                     <a href="#" class="list-group-item border-end-0 rounded-3 mt-2 d-inline-block text-truncate bg-white" @click="pick_nav = 2"><span>Thêm độc giả</span> </a>
@@ -173,7 +173,8 @@
                                 v-if="filteredTimKiemCount > 0"
                                 :list= "filteredTimkiem"
                                 v-model:activeIndex="activeIndex"
-                                @delete:book="deleteBook"/>
+                                @delete:book="deleteBook"
+                                @send:book="update_Sach"/>
                             </div>
                         </div>
                     </div>  
@@ -276,6 +277,7 @@
                 wsService: null,
                 searchText: "",                
                 searchStrings: [],  
+                role: "",
             };
         },
 
@@ -384,11 +386,6 @@
                 return this.filteredTimkiem ? this.filteredTimkiem.length : 0;
             },
 
-            updateList_staff(){
-                this.retrieveStaff()
-            },
-
-
             updateList_m(){
                 this.getList_m()  
             },
@@ -480,6 +477,15 @@
                 }
             },
 
+            async update_Sach(book){
+                try{
+                    console.log(book)
+                    this.wsService.sendMessage(JSON.stringify(book));
+                }catch(error) {
+                    console.log(error)
+                }
+            },
+
             async update_slSach_m(id){
                 try{
                     console.log(id)
@@ -547,8 +553,8 @@
 
             async createStaff(data){
                 try {
-                    console.log(data)
                     await nhanvienService.create(data);
+                    await this.retrieveStaff()
                     alert('Nhân viên được thêm thành công.');
                 } catch (error) {
                     console.log(error);
@@ -556,8 +562,9 @@
             },
 
             async createUser(data) {
-                try {
+                try {                   
                     await DocgiaService.create(data);
+                    await this.retrieveUser()
                     alert('Độc giả được thêm thành công.');
                 } catch (error) {
                     console.log(error);
@@ -566,7 +573,10 @@
 
             async createBook(data) {
                 try {
+                    console.log(data)
                     await SachService.create(data);
+                    this.wsService.sendMessage(data);
+                    await this.retrieveBooks()
                     alert('Sách được thêm thành công.');
                 } catch (error) {
                     console.log(error);
@@ -576,6 +586,7 @@
             async createNXB(data) {
                 try {
                     await NXBService.create(data);
+                    await this.retrieveNXB()
                     alert('Nhà xuất bản được thêm thành công.');
                 } catch (error) {
                     console.log(error);
@@ -597,6 +608,7 @@
                 if (confirm("Bạn muốn xóa đọc giả này?")) {
                     try {
                         await DocgiaService.delete(user._id);
+                        this.retrieveUser()
                     } catch (error) {
                         console.log(error);
                     }
@@ -606,6 +618,9 @@
             async deleteBook(book){
                 try {
                     await SachService.delete(book._id);
+                    book.trangthai = "huy" 
+                    this.wsService.sendMessage(book);
+                    this.retrieveBooks()
                     alert('Xóa sách thành công.');
                 } catch (error) {
                     console.log(error);
@@ -626,7 +641,11 @@
             },
 
             async getUser(){
-                this.user = await nhanvienService.get(this.$route.query.id);
+                this.user = await nhanvienService.get(sessionStorage.getItem("userId"));
+                if (!this.user) {
+                    this.$router.replace({ name: "loginform" });
+                }
+                this.role = this.$route.name === "docgia" ? "Độc giả" : "Nhân viên";
             },
 
             async updateTTtheodoi(data){
@@ -685,7 +704,7 @@
         created() {
             try {
                 
-                this.wsService = new WebSocketService('ws://localhost:3001');  // Khởi tạo kết nối
+                this.wsService = new WebSocketService('ws://localhost:3001/');  // Khởi tạo kết nối
                 this.wsService.connect();  // Mở kết nối WebSocket
                 // console.log(this.messages)
                 // Đăng ký để nhận thông tin từ WebSocket
