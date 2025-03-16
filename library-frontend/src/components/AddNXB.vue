@@ -13,7 +13,8 @@
             <input type="text" class="form-control" id="inputAddress" placeholder="1234 Main St"v-model="LocalNXB.diachiNXB"/>
         </div>        
         <div class="col-12">
-            <button type="submit"  class="btn btn-primary" @click="submitNXB">Thêm</button>
+            <button style="margin-right: 20px;" type="reset"  class="btn btn-outline-success">Reset</button>
+            <button type="button"  class="btn btn-primary" @click="submitNXB">Thêm</button>
         </div>
     </form>
 </template>

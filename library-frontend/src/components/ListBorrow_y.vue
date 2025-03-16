@@ -113,9 +113,9 @@ export default {
 
     removeFromList(id) {
       // Xóa phần tử khỏi danh sách mà không làm mất dữ liệu
-      // this.dl = this.dl.filter(item => item._id !== id);
-      // this.$emit("update:list", this.dl); // Gửi danh sách mới lên component cha
-      this.$emit("update:list", id); // Gửi danh sách mới lên component cha
+      this.dl = this.dl.filter(item => item._id !== id);
+      this.$emit("update:list", this.dl); // Gửi danh sách mới lên component cha
+    //   this.$emit("update:list", id); // Gửi danh sách mới lên component cha
     },
 
     readTrangthai(data) {

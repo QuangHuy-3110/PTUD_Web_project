@@ -15,7 +15,7 @@
                     aria-label="Search"
                     @input="updateModelValue"
                     @keyup.enter="submit">
-                    <button class="btn btn-outline-success" type="button" @click="submit">Search</button>
+                    <button class="btn btn-outline-success" type="reset" @click="updateModelValue">Reset</button>
                 </form>
             </div>                            
             
@@ -37,7 +37,7 @@
                 this.$emit("update:modelValue", e.target.value);
             },
             submit() {
-                this.$emit("submit");
+                this.$emit("update:modelValue", e.target.value);
             },
         },
 

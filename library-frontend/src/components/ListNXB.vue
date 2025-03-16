@@ -1,7 +1,7 @@
 <template>
  <div 
   class="accordion-item"
-  v-for="(element, index) in list"
+  v-for="(element, index) in update_dl"
   :key="element._id"
   @click="updateActiveIndex(index)">
 
@@ -18,9 +18,28 @@
         <p>Địa chỉ: {{ element.diachiNXB }}</p>
         <button class="btn btn-warning" style="margin-right: 20px;" @click="getdata(element)" type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> <i class="fas fa-edit"> </i>Chỉnh sửa</button>
         <button class="btn btn-danger" @click="getdelete(element)"> <i class="fas fa-edit"> </i>Xóa</button>
-        <EditNXB
+        
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Chỉnh sửa sách</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <!-- Chỉ hiển thị khi có dữ liệu sách -->
+          <EditNXB
         v-show="nxb && nxb._id"
         :nxb="this.nxb"/>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+          <button type="button" class="btn btn-primary">Lưu thay đổi</button>
+        </div>
       </div>
     </div>
   </div>
@@ -31,19 +50,29 @@ import EditNXB from './chillcomponents/EditNXB.vue';
 
 
   export default {
-    data(){
-      return{
-        nxb:{},
-      }
-    },
-    components:{
-      EditNXB,
-    },
     props: {
         list: { type: Array, default: [] },
         activeIndex: { type: Number, default: -1 },
     },
+    data(){
+      return{
+        nxb:{},
+        dl: [...this.list]
+      };
+    },
+    components:{
+      EditNXB,
+    },
+
+    computed:{
+      update_dl(){
+          this.dl = [...this.list]
+          return this.dl
+        }
+    },
+
     emits: ["update:activeIndex", "delete:nxb"],
+
     methods: {
         updateActiveIndex(index) {
           this.$emit("update:activeIndex", index);
@@ -55,6 +84,7 @@ import EditNXB from './chillcomponents/EditNXB.vue';
 
         getdelete(element){
           this.$emit("delete:nxb", element)
+          this.dl = this.dl.slice(this.activeIndex ,1)
         }
     }
   }; 

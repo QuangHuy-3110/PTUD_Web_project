@@ -1,36 +1,33 @@
 <template>
-  <div 
-    class="accordion-item"
-    v-for="(element, index) in list"
-    :key="element._id"
-    @click="updateActiveIndex(index)"
-  >
-
-    <h2 class="accordion-header" style="display: flex;">
+ <div 
+  class="accordion-item"
+  v-for="(element, index) in updatedl"
+  :key="element._id"
+  @click="updateActiveIndex(index)">
+    {{ console.log(activeIndex) }}
+    <h2 class="accordion-header">
       <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" :data-bs-target="'#' + element._id" aria-expanded="false" :aria-controls="element._id">
-        <span><strong>ID: &nbsp;</strong> {{ element._id }}</span>&nbsp;&nbsp;&nbsp;
-        <span><strong>Tên sách &nbsp;</strong> {{ element.tenSach }}</span>
+        <strong>ID: &nbsp; </strong> {{ element._id }}&nbsp;&nbsp;&nbsp;
+        <strong>Tên nhân viên: &nbsp; </strong> {{ element.tenNV }}
       </button>
     </h2>
     <div :id="element._id" class="accordion-collapse collapse">
       <div class="accordion-body">
         <p>ID: {{ element._id }}</p>
-        <p>Tên sách: {{ element.tenSach }}</p>
-        <p>Tác giả: {{ element.tacgia }}</p>
-        <p>Năm xuất bản: {{ element.namXB }}</p>
-        <p>Mã NXB: {{ element.maNXB }}</p>        
-        <p>Số quyển: {{ element.soquyenSach }}</p>
-
-        <!-- Sử dụng data-bs-toggle để hiển thị modal -->
+        <p>Tên nhân viên: {{ element.tenNV }}</p>
+        <p>Chức vụ: {{ element.chucvuNV }}</p>
+        <p>Số điện thoại: {{ element.dienthoaiNV }}</p>
+        <p>Địa chỉ: {{ element.diachiNV }}</p>
+        <p>Tài khoản: {{ element.taikhoanNV }}</p>
+      </div>
         <button class="btn btn-warning" style="margin-right: 20px;" @click="getdata(element)" type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
           <i class="fas fa-edit"></i> Chỉnh sửa
         </button>
         <button class="btn btn-danger" @click="getdelete(element)">
           <i class="fas fa-trash"></i> Xóa
         </button>
-      </div>
-    </div>
-  </div>
+    </div>    
+  </div> 
 
   <!-- Modal -->
   <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -42,7 +39,8 @@
         </div>
         <div class="modal-body">
           <!-- Chỉ hiển thị khi có dữ liệu sách -->
-          <EditBook :book="book" v-if="book && book._id" />
+          <EditStaff 
+          :nhanvien="staff" v-if="staff && staff._id" />
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
@@ -54,26 +52,31 @@
 </template>
 
 <script>
-  import EditBook from './chillcomponents/EditBook.vue';
-
+import EditStaff from './chillcomponents/EditStaff.vue';
   export default {
-    components: {
-      EditBook,
-    },
-
-    data() {
-      return {
-        book: {}, // Dữ liệu sách đang được chỉnh sửa
-      };
+    components:{
+        EditStaff
     },
 
     props: {
-      list: { type: Array, default: [] },
-      activeIndex: { type: Number, default: -1 },
+        list: { type: Array, default: [] },
+        activeIndex: { type: Number, default: -1 },
+    },
+    data() {
+      return {
+        staff: {}, // Dữ liệu sách đang được chỉnh sửa
+        dl: [...this.list],
+      };
     },
 
-    emits: ["update:activeIndex", "delete:book"],
+    computed:{
+        updatedl(){
+            this.dl = [...this.list]
+            return this.dl
+        }
+    },
 
+    emits: ["update:activeIndex", "delete:staff"],
     methods: {
       // Cập nhật index của item được chọn
       updateActiveIndex(index) {
@@ -82,12 +85,13 @@
 
       // Lấy thông tin của sách khi click chỉnh sửa
       getdata(element) {
-        this.book = element;
+        this.staff = element;
       },
 
       // Gọi sự kiện xóa sách
-      getdelete(element) {
-        this.$emit("delete:book", element);
+      getdelete(element) {     
+        this.$emit("delete:staff", element);
+        this.dl = this.dl.slice(this.activeIndex ,1)
       }
     },
   };

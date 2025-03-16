@@ -45,10 +45,12 @@
         <div class="col-2 px-2 bg-dark-subtle ">
             <div id="sidebar" class="collapse collapse-horizontal show border-end bg-secondary-subtle" >
                 <div id="sidebar-nav" class="list-group border-0 rounded-0 text-sm-start min-vh-100 ">
+                    <a href="#" class="list-group-item border-end-0 rounded-3 mt-2 d-inline-block text-truncate bg-white" @click="pick_nav=11, updateList_staff " v-if="user.chucvuNV === 'Giám đốc'"><span>Xem nhân viên</span> </a>
+                    <a href="#" class="list-group-item border-end-0 rounded-3 mt-2 d-inline-block text-truncate bg-white" @click="pick_nav=10" v-if="user.chucvuNV === 'Giám đốc'"><span>Thêm nhân viên</span> </a>
                     <a href="#" class="list-group-item border-end-0 rounded-3 mt-2 d-inline-block text-truncate bg-white" @click="pick_nav=1"><span>Thêm sách</span> </a>
                     <a href="#" class="list-group-item border-end-0 rounded-3 mt-2 d-inline-block text-truncate bg-white" @click="pick_nav = 2"><span>Thêm độc giả</span> </a>
                     <a href="#" class="list-group-item border-end-0 rounded-3 mt-2 d-inline-block text-truncate bg-white" @click="pick_nav = 3"><span>Thêm nhà xuất bản</span> </a>
-                    <a href="#" class="list-group-item border-end-0 rounded-3 mt-2 d-inline-block text-truncate bg-white" @click="pick_nav = 4"><span>Xử lý yêu cầu mượn sách</span> </a>
+                    <a href="#" class="list-group-item border-end-0 rounded-3 mt-2 d-inline-block text-truncate bg-white" @click="pick_nav = 4, update_y"><span>Xử lý yêu cầu mượn sách</span> </a>
                     <a href="#" class="list-group-item border-end-0 rounded-3 mt-2 d-inline-block text-truncate bg-white" @click="pick_nav = 5, updateList_m"><span>Xem thông tin mượn sách</span> </a>                    
                     <a href="#" class="list-group-item border-end-0 rounded-3 mt-2 d-inline-block text-truncate bg-white" @click="pick_nav = 6"><span>Xem thông tin độc giả</span> </a>                    
                     <a href="#" class="list-group-item border-end-0 rounded-3 mt-2 d-inline-block text-truncate bg-white" @click="pick_nav = 7"><span>Xem tất cả các sách</span> </a>
@@ -61,6 +63,28 @@
         <main class="col ps-md-2 pt-2">
             <div class="row">
                 <div class="col-12">
+                    <div v-if="pick_nav === 11">
+                        <SearchBar
+                        name_tag="Xem thông tin nhân viên"
+                        v-model="searchText"/>
+                        <hr>
+                        <div class="border p-3 overflow-auto"style="height: 600px;">
+                            <div class="accordion" id="accordionPanelsStayOpenExample">
+                                <ListStaff
+                                v-if="filteredTimKiemCount > 0"
+                                :list= "filteredTimkiem"
+                                v-model:activeIndex="activeIndex"
+                                @delete:staff="deleteStaff"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div v-if="pick_nav === 10">  
+                        <h4><strong>Nhân viên</strong></h4>
+                        <hr>
+                        <AddStaff @submit:staff="createStaff"/>
+                    </div>
+
                     <div v-if="pick_nav === 1">  
                         <h4><strong>Thêm sách</strong></h4>
                         <hr>
@@ -86,14 +110,12 @@
                     </div>
 
                     <div v-if="pick_nav === 4" >
-                       <SearchBar
-                        name_tag="Xử lý yêu cầu mượn sách"
-                        v-model="searchText"/>  
+                        <h4> <strong>Xử lý yêu cầu mượn sách</strong> </h4>
                         <hr>
                         <div class="border p-3 overflow-auto"style="height: 600px;">
                             <div class="accordion" id="accordionPanelsStayOpenExample">
                                 <p v-if="messages.length === 0"> Không có yêu cầu nào!</p>
-                                <ListBorrow
+                                <ListBorrow_y
                                 :nhanvien=1
                                 :list= "getList_y"
                                 v-model:activeIndex="activeIndex"
@@ -118,7 +140,8 @@
                                 v-model:list= "filteredTimkiem"
                                 v-model:activeIndex="activeIndex"
                                 @update:sach_t = "update_slSach_t"
-                                @update:theodoi_t="updateTTtheodoi_t"/> 
+                                @update:theodoi_t="updateTTtheodoi_t"
+                                @update:list="update_message"/> 
                             </div>
                         </div>
                     </div>                    
@@ -199,7 +222,10 @@
     import ListBook from "@/components/ListBook.vue"
     import ListBorrow from "@/components/ListBorrow.vue"
     import ListUser from "@/components/ListUser.vue"
+    import ListBorrow_y from "@/components/ListBorrow_y.vue"
+    import ListStaff from "@/components/ListStaff.vue"
 
+    import AddStaff from "@/components/AddStaff.vue"
     import AddUser from "@/components/AddUser.vue"
     import AddBook from "@/components/AddBook.vue"
     import Profile from "@/components/Profile.vue"
@@ -214,7 +240,10 @@
     import WebSocketService from "@/services/websocket.service"
 // import { json } from "express/lib/response"
     export default {
-        components: { 
+        components: {
+            ListStaff,
+            AddStaff, 
+            ListBorrow_y,
             SearchBar,
             EditPass,
             ListNXB,
@@ -230,6 +259,7 @@
 
         data() {
             return {
+                list_staff: [],
                 user: {},
                 list_nxb: [],
                 list_book: [],
@@ -244,7 +274,6 @@
                 newMessage: '',
                 messages: [],
                 wsService: null,
-                isUpdated: false,
                 searchText: "",                
                 searchStrings: [],  
             };
@@ -253,6 +282,10 @@
         watch: {
             searchText() {
                 this.activeIndex = -1;
+            },
+
+            messages(){
+
             },
 
             getList_y: {
@@ -295,6 +328,11 @@
                         const { maSach, maDG, trangthai, ngaytra, ngaymuon } = timkiem;
                         return [maSach, maDG, trangthai, ngaytra, ngaymuon].join("");
                     });
+                case 11:
+                    return this.list_staff.map((timkiem) => {
+                        const { _id, chucvuNV, dienthoaiNV, diachiNV, tenNV } = timkiem;
+                        return [_id, chucvuNV, dienthoaiNV, diachiNV, tenNV].join("");
+                    });
                 default: return [];          
                 }
             },
@@ -328,6 +366,11 @@
                     return this.list_t.filter((_timkiem, index) =>
                         this.TimKiemStrings[index].includes(this.searchText)
                     );
+                case 11:
+                    if (!this.searchText) return this.list_staff;
+                    return this.list_staff.filter((_timkiem, index) =>
+                        this.TimKiemStrings[index].includes(this.searchText)
+                    );
                     default: return [];
                 }
             },
@@ -339,6 +382,10 @@
 
             filteredTimKiemCount() {
                 return this.filteredTimkiem ? this.filteredTimkiem.length : 0;
+            },
+
+            updateList_staff(){
+                this.retrieveStaff()
             },
 
 
@@ -376,7 +423,7 @@
                             }
                         })
                         .filter((item) => item !== null); // Loại bỏ giá trị null
-
+                        // this.messages = this.removeIfCancelled(parsedMessages)
                     return this.removeIfCancelled(parsedMessages);
                 } catch (error) {
                     console.error("Lỗi trong getList_y:", error);
@@ -387,10 +434,13 @@
 
      
         methods: {
+            update_message(id){
+                this.list_m = this.list_m.filter(item => item._id !== id)
+            },
 
             async update_y(){
                 try{
-                    if(!this.isUpdated)
+                    // if(!this.isUpdated)
                     this.messages = await TheodoiService.get_trangthai('y')
                 }catch (error){
                     console.log(error)
@@ -421,6 +471,7 @@
                 try{
                     console.log(id)
                     let Sach = await SachService.get(id);
+                    console.log(Sach)
                     Sach.soquyenSach = Sach.soquyenSach + 1;
                     await SachService.update(id, Sach)
                     this.wsService.sendMessage(JSON.stringify(Sach));
@@ -431,7 +482,9 @@
 
             async update_slSach_m(id){
                 try{
+                    console.log(id)
                     let Sach = await SachService.get(id);
+                    console.log(Sach)
                     Sach.soquyenSach = Sach.soquyenSach - 1;
                     await SachService.update(id, Sach)
                     this.wsService.sendMessage(JSON.stringify(Sach));
@@ -441,7 +494,7 @@
             },
 
             updateList_y(list){
-                this.messages = list         
+                this.messages = list        
             },
 
             async retrieveBooks() {
@@ -455,6 +508,14 @@
             async retrieveUser() {
                 try {
                     this.list_user = await DocgiaService.getAll();
+                } catch (error) {
+                    console.log(error);
+                }
+            },
+
+            async retrieveStaff() {
+                try {
+                    this.list_staff = await nhanvienService.getAll();
                 } catch (error) {
                     console.log(error);
                 }
@@ -479,6 +540,16 @@
             async retrieveNXB() {
                 try {
                     this.list_nxb = await NXBService.getAll();
+                } catch (error) {
+                    console.log(error);
+                }
+            },
+
+            async createStaff(data){
+                try {
+                    console.log(data)
+                    await nhanvienService.create(data);
+                    alert('Nhân viên được thêm thành công.');
                 } catch (error) {
                     console.log(error);
                 }
@@ -511,8 +582,19 @@
                 }
             },
 
+            async deleteStaff(user) {
+                if (confirm("Bạn muốn xóa nhân viên này?")) {
+                    try {
+                        await nhanvienService.delete(user._id);
+                        await this.retrieveStaff()
+                    } catch (error) {
+                        console.log(error);
+                    }
+                }
+            },
+
             async deleteUser(user) {
-                if (confirm("Bạn muốn xóa Liên hệ này?")) {
+                if (confirm("Bạn muốn xóa đọc giả này?")) {
                     try {
                         await DocgiaService.delete(user._id);
                     } catch (error) {
@@ -567,6 +649,7 @@
                 this.pick_nav = 0,  
                 this.list_book = []
                 this.list_user = []
+                this.list_staff = []
                 this.list_y=[]
                 this.server = null      
                 this.activeIndex= -1  
@@ -593,6 +676,7 @@
                this.update_y()        
                 this.retrieveBooks()
                 this.retrieveUser()
+                this.retrieveStaff()
                 // this.retrieveBorrow()
                 this.retrieveNXB()
                 this.refreshList();    

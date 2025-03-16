@@ -2,9 +2,8 @@
     <div class="card" style="width: 18rem; margin: 10px 10px;" 
         v-for="(book, index) in updatedSachs"
         :key="book._id || index"
-        :class="{ active: index === activeIndex }"
-    >
-        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR27bEB-zYoRdrDkKcPPsT5r6SLSyh5krgTkg&s" class="card-img-top" alt="...">
+        :class="{ active: index === activeIndex }">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQgfGb74BzUnGmAZJpOQRVhIvv7__REJ7ycqA&s" class="card-img-top" alt="...">
         <div class="card-body">
             <h5 class="card-title">{{ book.tenSach }}</h5>
             <p class="card-text" style="text-align: justify;"> 
@@ -27,7 +26,7 @@ export default {
     data() {
         return {
             nxbService: nxbService,
-            updatedSachs: [],
+            updatedSachs: [], // Dữ liệu đã qua xử lý
             newMessage: '',
             messages: [],
             wsService: null
@@ -41,16 +40,41 @@ export default {
         activeIndex: { type: Number, default: -1 },
     },
 
-    watch: {
-        sachs: {
-            immediate: true, // Chạy ngay khi component mounted
-            handler: async function (newSachs) {
-                this.updatedSachs = await Promise.all(newSachs.map(async (book) => {
-                    return { ...book, tenNXB: await this.getNameNXB(book.maNXB) };
-                }));
-            }
+   watch: {
+    sachs: {
+        immediate: true, // Chạy ngay khi component mounted
+        handler: async function (newSachs) {
+            console.log("New data received:", newSachs);
+
+            // Dùng Promise.all để đảm bảo các dữ liệu bất đồng bộ được xử lý xong trước khi cập nhật
+            const filteredBooks = await Promise.all(newSachs.map(async (book) => {
+                if (book.hasOwnProperty('maDG') && book.hasOwnProperty('maSach')) {
+                    // Nếu là đối tượng không hợp lệ, trả về null
+                    return null;
+                }
+
+                // Lấy tên NXB từ API (nếu cần)
+                let tenNXB = "Không xác định";
+                if (book.maNXB) {
+                    try {
+                        tenNXB = await this.getNameNXB(book.maNXB);  // Gọi API để lấy tên NXB
+                    } catch (error) {
+                        console.error("Lỗi khi lấy NXB:", error);
+                    }
+                }
+
+                // Trả về sách đã cập nhật
+                return { ...book, tenNXB };
+            }));
+
+            // Lọc bỏ các đối tượng không hợp lệ (null)
+            this.updatedSachs = filteredBooks.filter(book => book !== null);
+            console.log("Filtered and updatedSachs:", this.updatedSachs);
         }
-    },
+    }
+},
+
+
 
     methods: {
         async getNameNXB(id) {
@@ -66,8 +90,6 @@ export default {
         muonSach(book){            
             this.$emit("update:theodoi_y", book);           
         },
-
-    },
-
+    }
 }
 </script>

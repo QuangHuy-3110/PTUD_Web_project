@@ -2,7 +2,7 @@
   <form>
  <div 
   class="accordion-item"
-  v-for="(element, index) in list"
+  v-for="(element, index) in updatedl"
   :key="element._id"
   @click="updateActiveIndex(index)">
     
@@ -21,7 +21,6 @@
         <p>Số điện thoại: {{ element.dienthoaiDG }}</p>
         <p>Địa chỉ: {{ element.diachiDG }}</p>
         <p>Tài khoản: {{ element.taikhoanDG }}</p>
-        <p>Mật khẩu: {{ element.matkhauDG }}</p>
       </div>
       <button type="submit" class="btn btn-danger m-3" @click="deleteuser(element)"> <i class="fas fa-edit"> </i>Xóa</button>      
     </div>    
@@ -37,6 +36,19 @@
         activeIndex: { type: Number, default: -1 },
     },
 
+    data(){
+      return{
+        dl: [...this.list],
+      }
+    },
+
+    computed:{
+        updatedl(){
+            this.dl = [...this.list]
+            return this.dl
+        }
+    },
+
     emits: ["update:activeIndex", "delete:user"],
     methods: {
         updateActiveIndex(index) {
@@ -45,6 +57,7 @@
 
         deleteuser(element) {
             this.$emit("delete:user", element);
+            this.dl = this.dl.slice(this.activeIndex ,1)
         },
     },
   };
