@@ -75,12 +75,19 @@
         </div>
     </div>
 </div>
-<div  class="modal fade" id="staticBackdropstaff" data-bs-backdrop="true" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabelstaff" aria-hidden="true">
-    <div  class="modal-dialog">
+<div class="modal fade" id="staticBackdropstaff" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Chỉnh sửa thông tin nhân viên</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
         <EditStaff :nhanvien="this.user"/>
+        </div>
+      </div>
     </div>
-</div>
-
+  </div>
 
 <!-- Button to trigger modal -->
 <!-- <button id="profileModalButton" data-bs-toggle="modal" data-bs-target="#profileModal">Open Profile</button> -->
@@ -95,6 +102,7 @@ import EditStaff from './chillcomponents/EditStaff.vue';
         props:{
             user: {type: Object, required: true},
         },
+
     }
 
     

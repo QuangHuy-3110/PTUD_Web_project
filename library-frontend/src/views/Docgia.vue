@@ -89,6 +89,7 @@
           <ListBorrow_y            
             :list= "list_y"
             @update:list="update_y"
+            @update:list1="upd_listy"
             @cancel:yeucau="cancel"
             @delete:theodoi="deleteTheoDoi"
             v-model:activeIndex="activeIndex"/>
@@ -223,7 +224,7 @@
             this.laydulieu() 
           },
 
-          updateList_y(){
+          updateList_y (){
             this.getList_y()  
           },
 
@@ -236,7 +237,7 @@
           },
 
           getList_Sach() {
-            try {
+            try {                
                 if (!this.messages || this.messages.length === 0) {
                     console.warn("Danh sách messages rỗng hoặc undefined:", this.messages);
                     return [];
@@ -300,7 +301,7 @@
 
                 // Gộp với danh sách sách
                 this.messages = this.sachs.concat(this.messages);
-
+                    
                 // Xóa trùng lặp theo `_id`
                 let parsedMessages = Array.from(new Map(this.messages.map(item => [item._id, item])).values());
                 return this.removeIfCancelled(parsedMessages);
@@ -315,11 +316,13 @@
 
     // Đoạn mã xử lý đầy đủ sẽ trình bày bên dưới
         methods: {
-
-          removeIfCancelled(arr) {
+              async upd_listy(){
+                await this.getList_y()
+                return this.list_y
+              },
+              removeIfCancelled(arr) {
                 // Bước 1: Nhóm phần tử theo id
                 const grouped = new Map();
-
                 arr.forEach(item => {
                     if (!grouped.has(item._id)) {
                         grouped.set(item._id, []);

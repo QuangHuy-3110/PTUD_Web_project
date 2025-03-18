@@ -22,7 +22,7 @@
         <p>Địa chỉ: {{ element.diachiDG }}</p>
         <p>Tài khoản: {{ element.taikhoanDG }}</p>
       </div>
-      <button type="submit" class="btn btn-danger m-3" @click="deleteuser(element)"> <i class="fas fa-edit"> </i>Xóa</button>      
+      <button type="button" class="btn btn-danger m-3" @click="deleteuser(element)"> <i class="fas fa-edit"> </i>Xóa</button>      
     </div>    
   </div> 
   </form> 

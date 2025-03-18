@@ -41,7 +41,9 @@
                             this.authStore.setUser({ id: docgia[0]._id});
                             sessionStorage.setItem("userId", docgia[0]._id);
                             this.router.replace({ name: "docgia" });
-                        }                            
+                        } else{
+                            alert("Tên đăng nhập hoặc mật khẩu không đúng")
+                        }                           
                             // this.$router.push({ name: "docgia", query: { id: docgia[0]._id } });
 
                     }else if(nhanvien[0]){
@@ -50,10 +52,13 @@
                             this.authStore.setUser({ id: nhanvien[0]._id});
                             sessionStorage.setItem("userId", nhanvien[0]._id);
                             this.router.replace({ name: "nhanvien" });
-                        }                            
+                        }     
+                        else{
+                            alert("Tên đăng nhập hoặc mật khẩu không đúng")
+                        }                         
                             // this.$router.push({ name: "nhanvien", query: { id: nhanvien[0]._id } });
                     }else {
-                        alert("Sai ten dang nhap hoac mat khau")
+                        alert("Sai tên đăng nhập hoặc mật khẩu")
                     }
                 } catch (error) {
                     console.log(error);

@@ -1,5 +1,5 @@
 <template >
-    <body  style="background-image: url('https://mdbootstrap.com/img/Photos/Others/sidenav2.jpg');background-size: cover;">
+    <body style="background-image: url('https://mdbootstrap.com/img/Photos/Others/sidenav2.jpg');background-size: cover;">
     <div class="wrapper fadeInDown">
       <div id="formContent">
         <!-- Tabs Titles -->         
@@ -10,7 +10,7 @@
         </div>
 
         <!-- Login Form -->
-        <form>
+        <form @keydown.enter="submit"> 
           <input type="text" id="login" class="fadeIn second" name="login" placeholder="login" v-model="userInput">
           <input type="password" id="password" class="fadeIn third" name="login" placeholder="password" v-model="passInput">
           <input type="button" class="fadeIn fourth" @click="submit" value="Login">

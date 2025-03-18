@@ -44,7 +44,8 @@ export default {
           "update:sach_m",
           "update:sach_t",
           "cancel:yeucau",
-          "delete:theodoi"],
+          "delete:theodoi",
+          "update:list1"],
   data() {
     return {
       dl: [...this.list], // Danh sách dữ liệu hiển thị
@@ -65,6 +66,7 @@ export default {
   methods: {
     updateActiveIndex(index) {
       this.$emit("update:activeIndex", index);
+      this.$emit("update:list1")
     },
 
     async accept(element) {

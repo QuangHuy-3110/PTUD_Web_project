@@ -9,32 +9,32 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-            <form class="row g-3">
+            <Form :validation-schema="contactFormSchema" class="row g-3">
                 <div class="col-md-10">
                     <label class="form-label" for="id">ID: </label>
                     <input type="text" id="id" class="form-control" placeholder="..." v-model="user._id" disabled>
                 </div>
                 <div class="col-md-10">
                     <label class="form-label" for="name">Tên đọc giả</label>
-                    <input type="text" id="name" class="form-control" placeholder="..." v-model="user.tenDG">
+                    <Field type="text" name="name" class="form-control" placeholder="..." v-model="user.tenDG"/>
+                    <ErrorMessage name="name" class="text-danger" />
                 </div>
                 <div class="col-md-10">
                     <label class="form-label" for="born">Ngày sinh</label>
-                    <input type="date" id="born" class="form-control" placeholder="..." v-model="user.ngaysinhDG">
-                </div>
-                <div class="col-md-10">
-                    <label class="form-label" for="gioitinh">Giới tính</label>
-                    <input type="text" id="gioitinh" class="form-control" placeholder="..." v-model="user.gioitinhDG">
+                    <Field type="date" name="born" class="form-control" placeholder="..." v-model="user.ngaysinhDG"/>
+                    <ErrorMessage name="born" class="text-danger" />
                 </div>
                 <div class="col-md-4">
                     <label class="form-label" for="dienthoai">Điện thoại</label>
-                    <input type="text" class="form-control" id="dienthoai" placeholder="..." v-model="user.dienthoaiDG">
+                    <Field type="text" class="form-control" name="dienthoai" placeholder="..." v-model="user.dienthoaiDG"/>
+                    <ErrorMessage name="dienthoai" class="text-danger" />
                 </div>
                 <div class="col-md-10">
                     <label class="form-label" for="diachi">Địa chỉ</label>
-                    <input type="text" class="form-control" id="diachi" placeholder="..." v-model="user.diachiDG">
+                    <Field type="text" class="form-control" name="diachi" placeholder="..." v-model="user.diachiDG"/>
+                    <ErrorMessage name="diachi" class="text-danger" />
                 </div>                 
-            </form>
+            </Form>
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-primary" @click="updatetUser">Xong</button>
@@ -46,11 +46,49 @@
 
 <script>
 import docgiaService from '@/services/docgia.service';
-
+import * as yup from "yup";
+import { Form, Field, ErrorMessage } from "vee-validate";
     export default {
+        components:{
+            Form, Field, ErrorMessage
+        },
 
         props: {
             user: {type: Object, required: true}
+        },
+
+        data(){
+            const contactFormSchema = yup.object().shape({
+                id: yup
+                    .string()
+                    .required("Phải nhập ID.")
+                    .min(12, "CCCD phải có đủ 12 ký tự")
+                    .max(12, "CCCD phải có đủ 12 ký tự"),
+                name: yup
+                    .string()
+                    .required("Tên phải có giá trị.")
+                    .min(2, "Tên phải ít nhất 2 ký tự.")
+                    .max(50, "Tên có nhiều nhất 50 ký tự."),
+                dienthoai: yup
+                    .string()
+                    .min(10, "Số điện thoại phải có 10 ký tự.")
+                    .max(10, "Số điện thoại phải có 10 ký tự.")
+                    .matches(
+                        /((09|03|07|08|05)+([0-9]{8})\b)/g,
+                        "Số điện thoại không hợp lệ."
+                    ),
+                born: yup
+                    .date()
+                    .required("Phải có ngày tháng.")
+                    .max(new Date(), "Ngày sinh không thể lớn hơn ngày hôm nay."),
+                diachi: yup
+                    .string()
+                    .required("Tên phải có giá trị.")
+                    .max(100, "Địa chỉ tối đa 100 ký tự."),
+            });
+            return{
+                contactFormSchema,
+            }
         },
 
         methods: {

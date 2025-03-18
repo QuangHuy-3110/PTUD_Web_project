@@ -51,6 +51,12 @@ import bcrypt from 'bcryptjs';
             nhanvienMK: {type: Object, required: true}
         },
         methods:{   
+            async hashPassword(password) {
+                const salt = await bcrypt.genSalt(10); // Tạo salt với độ khó 10
+                const hashedPassword = await bcrypt.hash(password, salt); // Băm mật khẩu
+                return hashedPassword;
+            },
+
             async checkpass (){
                 const isMatch = await bcrypt.compare(this.passOld, this.nhanvienMK.matkhauNV);
                 if(!isMatch){
@@ -58,7 +64,9 @@ import bcrypt from 'bcryptjs';
                 }else if(this.passNew1 !== this.passNew2){
                     alert("Mật khẩu không trùng khớp")
                 }else{
-                    this.nhanvienMK.matkhauNV = this.passNew1
+                    console.log(this.passNew1)
+                    this.nhanvienMK.matkhauNV = await this.hashPassword(this.passNew1)
+                    console.log(this.nhanvienMK.matkhauNV)
                     if (confirm("Hoàn tất!")) {
                         try {
                             // Gọi phương thức update trực tiếp từ nhanvienService

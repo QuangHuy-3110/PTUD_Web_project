@@ -3,7 +3,7 @@
             <img src="https://cdn-icons-png.flaticon.com/512/224/224595.png" width="100">
             <div class="page-header pt-3 " style="padding-left: 50px;">            
                 <h3>Hệ thống quản lý thư viện</h3>
-                <p class="lead">Dành cho nhân viên.</p>
+                <p class="lead">Dành cho {{ user.chucvuNV }}.</p>
             </div> 
             <div class=" ms-auto mb-2 mb-lg-0">
                 <ul>
@@ -73,6 +73,7 @@
                                 <ListStaff
                                 v-if="filteredTimKiemCount > 0"
                                 :list= "filteredTimkiem"
+                                :role="user.chucvuNV"
                                 v-model:activeIndex="activeIndex"
                                 @delete:staff="deleteStaff"/>
                             </div>
@@ -630,6 +631,7 @@
             async deleteNXB(NXB){
                 try {
                     await NXBService.delete(NXB._id)
+                    this.retrieveNXB()
                     alert("Xóa nhà xuất bản thành công");
                 } catch (error) {
                     console.log(error);
@@ -637,6 +639,7 @@
             }, 
 
             logout(){
+                
                 this.$router.push({ name: "loginform"})
             },
 

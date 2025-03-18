@@ -40,11 +40,8 @@
         <div class="modal-body">
           <!-- Chỉ hiển thị khi có dữ liệu sách -->
           <EditStaff 
-          :nhanvien="staff" v-if="staff && staff._id" />
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-          <button type="button" class="btn btn-primary">Lưu thay đổi</button>
+          :nhanvien="staff" v-if="staff && staff._id" 
+          :role="role"/>
         </div>
       </div>
     </div>
@@ -61,6 +58,7 @@ import EditStaff from './chillcomponents/EditStaff.vue';
     props: {
         list: { type: Array, default: [] },
         activeIndex: { type: Number, default: -1 },
+        role: { type: String }
     },
     data() {
       return {
