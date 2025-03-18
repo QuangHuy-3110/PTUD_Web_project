@@ -91,7 +91,7 @@ class DocgiaService {
             gioitinhDG: payload.gioitinhDG,
             ngaysinhDG: payload.ngaysinhDG,
             dienthoaiDG: payload.dienthoaiDG,
-            matkhauDG: await this.hashPassword(payload.matkhauDG),
+            matkhauDG: payload.matkhauDG,
         };
         const result = await this.Docgia.findOneAndUpdate(
             filter,

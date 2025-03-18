@@ -15,7 +15,7 @@ class NhanvienService {
     }
 
     async extractNhanvienData(payload) {
-        const mk = await this.hashPassword("1")
+        const mk = await this.hashPassword('1')
          const nhanvien = {
             _id: payload._id,
             tenNV: payload.tenNV,
@@ -93,7 +93,7 @@ class NhanvienService {
             chucvuNV: payload.chucvuNV,
             dienthoaiNV: payload.dienthoaiNV,
             taikhoanNV: payload._id,
-            matkhauNV: await this.hashPassword(payload.matkhauNV),
+            matkhauNV: payload.matkhauNV,
         };
         const result = await this.Nhanvien.findOneAndUpdate(
             filter,
