@@ -4,7 +4,14 @@
   <!-- Container wrapper -->
   <div class="container">
     <!-- Navbar brand -->
-    <img src="https://cdn-icons-png.flaticon.com/512/224/224595.png" width="60" style="margin-right: 300px ;">
+    <div class="d-flex align-items-center p-3" style=" max-width: 250px; margin-right: 200px;">
+        <img src="https://cdn-icons-png.flaticon.com/512/224/224595.png" width="60" class="me-2">
+        <p class="mb-0 fw-bold fs-2 text-muted" style="font-family: 'Poppins', sans-serif; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);">
+            Library
+        </p>
+    </div>
+
+
     <!-- Search form -->
     <SearchBar_user
     v-model="searchText"/>
@@ -44,9 +51,9 @@
             aria-expanded="false"
           >
             <img
-              src="https://mdbootstrap.com/img/Photos/Avatars/img%20(9).jpg"
+              src="https://cdn-icons-png.flaticon.com/512/748/748493.png"
               class="rounded-circle"
-              height="30"
+              height="40"
               alt=""
               loading="lazy"
             />
@@ -89,7 +96,7 @@
           <ListBorrow_y            
             :list= "list_y"
             @update:list="update_y"
-            @update:list1="upd_listy"
+            @update:list2="getList_y"
             @cancel:yeucau="cancel"
             @delete:theodoi="deleteTheoDoi"
             v-model:activeIndex="activeIndex"/>
@@ -117,6 +124,37 @@
       </div>
   </div>
 </main>
+<footer class="footer bg-secondary-subtle">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <div class="footer-brand">Library</div>
+                <p class="footer-text">A library that no one can find because it is bad and useless. Above all, it does not exist in real life..</p>
+                <div class="social-links">
+                    <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-facebook"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+
+            <div class="col-md-6 text-md-end">
+                <ul class="footer-links">
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">Services</a></li>
+                    <li><a href="#">Contact</a></li>
+                    <li><a href="#">Privacy</a></li>
+                    <li><a href="#">Terms</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="copyright text-center">
+            © 2024 CompanyName. All rights reserved.
+        </div>
+    </div>
+</footer>
+
 </template>
 
 <script>    
@@ -298,10 +336,9 @@
                         }
                     })
                     .filter((item) => item !== null) // Loại bỏ giá trị null
-
+                    console.log("hien thi messages",this.messages)
                 // Gộp với danh sách sách
                 this.messages = this.sachs.concat(this.messages);
-                    
                 // Xóa trùng lặp theo `_id`
                 let parsedMessages = Array.from(new Map(this.messages.map(item => [item._id, item])).values());
                 return this.removeIfCancelled(parsedMessages);
@@ -316,10 +353,6 @@
 
     // Đoạn mã xử lý đầy đủ sẽ trình bày bên dưới
         methods: {
-              async upd_listy(){
-                await this.getList_y()
-                return this.list_y
-              },
               removeIfCancelled(arr) {
                 // Bước 1: Nhóm phần tử theo id
                 const grouped = new Map();
@@ -332,7 +365,7 @@
 
                 // Bước 2: Lọc bỏ nhóm có trạng thái "hủy"
                 const filtered = [...grouped.values()].filter(group => 
-                    !group.some(item => item.trangthai === "huy")
+                    !group.some(item => item.trangthai === "huy" || item.trangthai === "m")
                 );
 
                 // Bước 3: Trả về danh sách hợp lệ (flatten array)
@@ -499,6 +532,7 @@
 
 <style scoped>
 @import "@/assets/docgia.css";
+@import "@/assets/footerUser.css";
     .page {
     text-align: left;
     max-width: 750px;

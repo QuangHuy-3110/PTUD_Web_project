@@ -20,7 +20,7 @@
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="profile-img text-center">
-                                    <img src="https://media.istockphoto.com/id/954281130/vi/vec-to/man-user-icon-vector-person-symbol-profile-stroke-circle-avatar-sign-in-flat-color-glyph.jpg?s=612x612&w=0&k=20&c=-r_rPQUh901XdfNhCe3A67pPp5MlUH0jdyCCWs0goaU=" class="img-fluid rounded-circle" alt=""/>
+                                    <img src="https://cdn-icons-png.flaticon.com/512/748/748493.png" class="img-fluid rounded-circle" alt=""/>
                                     <div class="mt-3">
                                         <!-- <label class="btn btn-primary btn-sm">
                                             Change Photo <input type="file" name="file" hidden/>

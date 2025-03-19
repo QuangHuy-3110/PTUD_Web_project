@@ -1,6 +1,6 @@
 <template>
     <Form :validation-schema="contactFormSchema" @submit="submitUser" class="row g-3">
-        <div class="col-md-3">
+        <div class="col-md-4">
             <label class="form-label" for="id">CCCD</label>
             <Field type="text" name="id" class="form-control" placeholder="..." v-model="LocalUser._id" />
             <ErrorMessage name="id" class="text-danger" />
@@ -10,7 +10,7 @@
             <Field type="text" name="name" class="form-control" placeholder="Nguyen Van A" v-model="LocalUser.tenDG" />
             <ErrorMessage name="name" class="text-danger" />
         </div>
-        <div class="col-md-5">
+        <div class="col-md-3">
             <label class="form-label" for="sdt">Số điện thoại</label>
             <Field type="text" class="form-control" name="sdt"v-model="LocalUser.dienthoaiDG" />
             <ErrorMessage name="sdt" class="text-danger" />
@@ -30,7 +30,7 @@
             </Field>
             <ErrorMessage name="gioitinh" class="text-danger" />
         </div>
-        <div class="col-12">
+        <div class="col-10">
             <label for="inputAddress" class="form-label" name="diachiDG">Địa chỉ</label>
             <Field type="text" class="form-control" name="inputAddress" placeholder="1234 Main St"v-model="LocalUser.diachiDG"/>
             <ErrorMessage name="inputAddress" class="text-danger" />

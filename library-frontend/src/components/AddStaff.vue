@@ -1,17 +1,17 @@
 <template>
     <Form :validation-schema="contactFormSchema" @submit="submitStaff" class="row g-3">
-        <div class="col-md-3">
+        <div class="col-md-4">
             <label class="form-label" for="id">ID</label>
             <Field type="text" name="id" class="form-control" placeholder="NV..." v-model="LocalStaff._id" />
             <ErrorMessage name="name" class="text-danger" />
         </div>
-        <div class="col-md-6">
+        <div class="col-md-5">
             <label class="form-label" for="name">Họ và tên</label>
             <Field type="text" name="name" class="form-control" placeholder="Nguyen Van A" v-model="LocalStaff.tenNV" />
             <ErrorMessage name="name" class="text-danger" />
         </div>
 
-        <div class="col-md-6">
+        <div class="col-md-4">
             <label class="form-label" for="role">Chức vụ</label>
             <Field type="text" name="role" class="form-control" placeholder="Nhân viên" v-model="LocalStaff.chucvuNV" />
             <ErrorMessage name="role" class="text-danger" />
@@ -23,7 +23,7 @@
             <ErrorMessage name="sdt" class="text-danger" />
         </div>
         
-        <div class="col-12">
+        <div class="col-9">
             <label for="inputAddress" class="form-label" name="diachiDG">Địa chỉ</label>
             <Field type="text" class="form-control" name="inputAddress" placeholder="1234 Main St"v-model="LocalStaff.diachiNV"/>
             <ErrorMessage name="inputAddress" class="text-danger" />

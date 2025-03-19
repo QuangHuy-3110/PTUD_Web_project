@@ -1,4 +1,5 @@
 <template>
+    <div style="margin: 5px 5px;">
         <div style="padding: 10px 50px; display: flex;" class="bg-secondary text-white p-3">
             <img src="https://cdn-icons-png.flaticon.com/512/224/224595.png" width="100">
             <div class="page-header pt-3 " style="padding-left: 50px;">            
@@ -16,10 +17,21 @@
                             data-bs-toggle="dropdown"
                             aria-expanded="false"
                         >
+                        <!-- src="https://media.istockphoto.com/id/954281130/vi/vec-to/man-user-icon-vector-person-symbol-profile-stroke-circle-avatar-sign-in-flat-color-glyph.jpg?s=612x612&w=0&k=20&c=-r_rPQUh901XdfNhCe3A67pPp5MlUH0jdyCCWs0goaU=" -->
                             <img
-                            src="https://media.istockphoto.com/id/954281130/vi/vec-to/man-user-icon-vector-person-symbol-profile-stroke-circle-avatar-sign-in-flat-color-glyph.jpg?s=612x612&w=0&k=20&c=-r_rPQUh901XdfNhCe3A67pPp5MlUH0jdyCCWs0goaU="
+                            v-if="user.chucvuNV === 'Nhân viên'"
+                            src="https://cdn3.iconfinder.com/data/icons/avatars-collection/256/24-128.png"
                             class="rounded-circle"
-                            height="40"
+                            height="50"
+                            alt=""
+                            loading="lazy"
+                            />
+
+                            <img
+                            v-if="user.chucvuNV === 'Giám đốc'"
+                            src="https://cdn3.iconfinder.com/data/icons/avatars-collection/256/20-128.png"
+                            class="rounded-circle"
+                            height="50"
                             alt=""
                             loading="lazy"
                             />
@@ -60,7 +72,7 @@
                 </div>
             </div>
         </div>
-        <main class="col ps-md-2 pt-2">
+        <main class="col ps-md-2">
             <div class="row">
                 <div class="col-12">
                     <div v-if="pick_nav === 11">
@@ -215,6 +227,7 @@
             </div>
         </main>
     </div>
+</div>
 </div>
 </template>
 <script>
@@ -446,7 +459,7 @@
             }, 
 
             removeIfCancelled(arr) {
-                // Bước 1: Nhóm phần tử theo id
+                // Bước 1: Nhóm phần tử theo _id
                 const grouped = new Map();
 
                 arr.forEach(item => {
@@ -458,11 +471,13 @@
 
                 // Bước 2: Lọc bỏ nhóm có trạng thái "hủy"
                 const filtered = [...grouped.values()].filter(group => 
-                    !group.some(item => item.trangthai === "huy")
+                    !group.some(item => item.trangthai === "huy" || item.trangthai === "m")
                 );
 
-                // Bước 3: Trả về danh sách hợp lệ (flatten array)
-                return filtered.flat();
+                // Bước 3: Giữ nguyên nhóm nhưng loại bỏ từng đối tượng có trạng thái "m" hoặc có thuộc tính "tenSach"
+                const result1 = filtered.flat().filter(item => !item.hasOwnProperty("tenSach"));
+
+                return result1;
             },
 
             async update_slSach_t(id){
@@ -487,13 +502,14 @@
                 }
             },
 
-            async update_slSach_m(id){
+            async update_slSach_m(element){
                 try{
-                    console.log(id)
-                    let Sach = await SachService.get(id);
+                    // console.log(id)
+                    let Sach = await SachService.get(element.maSach);
                     console.log(Sach)
                     Sach.soquyenSach = Sach.soquyenSach - 1;
-                    await SachService.update(id, Sach)
+                    await SachService.update(element.maSach, Sach)
+                    this.wsService.sendMessage(JSON.stringify(element));
                     this.wsService.sendMessage(JSON.stringify(Sach));
                 }catch(error) {
                     console.log(error)
@@ -735,6 +751,7 @@
 </script>
 
 <style scoped>
+@import "@/assets/footerUser.css";
     .page {
     text-align: left;
     max-width: 750px;

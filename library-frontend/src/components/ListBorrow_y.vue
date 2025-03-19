@@ -45,7 +45,7 @@ export default {
           "update:sach_t",
           "cancel:yeucau",
           "delete:theodoi",
-          "update:list1"],
+          "update:list2"],
   data() {
     return {
       dl: [...this.list], // Danh sách dữ liệu hiển thị
@@ -66,7 +66,7 @@ export default {
   methods: {
     updateActiveIndex(index) {
       this.$emit("update:activeIndex", index);
-      this.$emit("update:list1")
+      this.$emit("update:list2")
     },
 
     async accept(element) {
@@ -75,7 +75,7 @@ export default {
         if(sach.soquyenSach !== 0){
           element.trangthai = "m"; // Đang mượn
           element.ngaymuon = new Date().toLocaleDateString();
-          this.$emit("update:sach_m", element.maSach)
+          this.$emit("update:sach_m", element)
           this.$emit("update:theodoi", element);
           this.removeFromList(element._id);
         }else{
@@ -89,7 +89,6 @@ export default {
     reject(element) {
       element.trangthai = "f"; // Từ chối
       this.$emit("update:theodoi", element);
-      
       this.removeFromList(element._id);
     },
 

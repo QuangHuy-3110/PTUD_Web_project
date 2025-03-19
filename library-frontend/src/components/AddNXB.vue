@@ -7,10 +7,10 @@
         </div>
         <div class="col-md-6">
             <label class="form-label" for="name">Tên nhà xuất bản</label>
-            <Field type="text" name="name" class="form-control" placeholder="Nguyen Van A" v-model="LocalNXB.tenNXB" />
+            <Field type="text" name="name" class="form-control" placeholder="Nhà xuất bản ..." v-model="LocalNXB.tenNXB" />
             <ErrorMessage name="name" class="text-danger" />
         </div>
-        <div class="col-12">
+        <div class="col-9">
             <label for="inputAddress" class="form-label" name="diachiDG">Địa chỉ</label>
             <Field type="text" class="form-control" name="inputAddress" placeholder="1234 Main St"v-model="LocalNXB.diachiNXB"/>
             <ErrorMessage name="inputAddress" class="text-danger" />
