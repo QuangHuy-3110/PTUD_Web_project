@@ -253,6 +253,9 @@
     import TheodoiService from "@/services/theodoi.service"
     import nhanvienService from "@/services/nhanvien.service"
     import WebSocketService from "@/services/websocket.service"
+
+    import { useAuthStore } from "@/stores/authStore";
+    import { useRouter } from "vue-router";
 // import { json } from "express/lib/response"
     export default {
         components: {
@@ -274,6 +277,8 @@
 
         data() {
             return {
+                router: useRouter(),
+                authStore: useAuthStore(),
                 list_staff: [],
                 user: {},
                 list_nxb: [],
@@ -655,8 +660,10 @@
             }, 
 
             logout(){
-                
-                this.$router.push({ name: "loginform"})
+                this.user = {}
+                this.authStore.logout();
+                this.router.replace({ name: "docgia" });
+                // this.$router.push({ name: "loginform"})
             },
 
             async getUser(){
@@ -693,6 +700,15 @@
                 this.activeIndex= -1  
                     
             },
+            connectWebSocket() {
+              this.wsService = new WebSocketService('ws://localhost:3001'); // URL của WebSocket server
+              this.wsService.connect(); // Mở kết nối WebSocket
+
+              // Đăng ký callback để nhận tin nhắn từ WebSocket server
+              this.wsService.onMessage((message) => {
+                this.messages.push(message); // Thêm tin nhắn vào mảng
+              });
+            },
 
             sendMessage() {
               if (this.newMessage) {
@@ -718,12 +734,13 @@
                 // this.retrieveBorrow()
                 this.retrieveNXB()
                 this.refreshList();    
+                this.connectWebSocket();
         },
 
         created() {
             try {
                 
-                this.wsService = new WebSocketService('ws://localhost:3001/');  // Khởi tạo kết nối
+                this.wsService = new WebSocketService('ws://localhost:3001');  // Khởi tạo kết nối
                 this.wsService.connect();  // Mở kết nối WebSocket
                 // console.log(this.messages)
                 // Đăng ký để nhận thông tin từ WebSocket

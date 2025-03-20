@@ -3,7 +3,8 @@
         v-for="(book, index) in updatedSachs"
         :key="book._id || index"
         :class="{ active: index === activeIndex }">
-        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQgfGb74BzUnGmAZJpOQRVhIvv7__REJ7ycqA&s" class="card-img-top" alt="...">
+        <!-- <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQgfGb74BzUnGmAZJpOQRVhIvv7__REJ7ycqA&s" class="card-img-top" alt="..."> -->
+        <img src="\src\picture\00001.jpg" class="card-img-top" alt="...">
         <div class="card-body">
             <h5 class="card-title">{{ book.tenSach }}</h5>
             <p class="card-text" style="text-align: justify;"> 
@@ -13,7 +14,7 @@
                 <strong>Năm xuất bản: </strong> {{ book.namXB }} <br>
                 <strong>Số quyển sách: </strong> {{ book.soquyenSach }} <br>
             </p>
-            <a href="#" class="btn btn-primary" @click="muonSach(book)">Đăng kí mượn</a>
+            <button class="btn btn-primary" @click="muonSach(book)" :hidden="user._id===undefined">Đăng kí mượn</button>
             <a href="#"> <i class="fa-regular fa-heart"  style="margin-left: 20px; font-size: larger;"></i></a>
         </div>
     </div>
@@ -36,6 +37,7 @@ export default {
     emits: ["update:theodoi_y"],
 
     props: {
+        user: {type: Object, default: {}},
         sachs: { type: Array, default: [] },
         activeIndex: { type: Number, default: -1 },
     },

@@ -23,8 +23,16 @@
       <i class="fas fa-bars"></i>
     </button>
 
+    
+    <router-link
+        :to="{
+            name: 'loginform',
+        }">
+        <button v-if="user._id === undefined" class="btn btn-primary btn-lg d-flex align-items-center gap-2">Đăng nhập</button>
+    </router-link>
+
     <!-- Collapsible wrapper -->
-    <div class="collapse navbar-collapse " id="navbarSupportedContent">
+    <div v-if="user._id !== undefined" class="collapse navbar-collapse " id="navbarSupportedContent">
       <!-- Left links -->
       <ul class="navbar-nav d-flex justify-content-evenly w-100 mb-2 mb-lg-0">
         <li class="nav-item">
@@ -104,6 +112,7 @@
       <div class="row gx-5" v-if="nav_pick === 0">
         <Card 
         v-if="filteredTimKiemCount > 0"
+        :user="user"
         :sachs="filteredTimkiem"
         v-model:activeIndex="activeIndex"
         @update:theodoi_y="Addtheodoi"/>
@@ -188,6 +197,8 @@
     import WebSocketService from "@/services/websocket.service";
     import ListBorrow_y from "@/components/ListBorrow_y.vue";
     import SearchBar_user from "@/components/SearchBar_user.vue";
+    import { useAuthStore } from "@/stores/authStore";
+    import { useRouter } from "vue-router";
 // import ListBorrowUser from "@/components/ListBorrowUser.vue";
     export default {
         components: {
@@ -201,6 +212,8 @@
 
         data() {
             return {
+                router: useRouter(),
+                authStore: useAuthStore(),
                 sachs:[],
                 activeIndex: -1,
                 user: {},
@@ -487,7 +500,11 @@
             },
 
             logout (){
-              this.$router.push({name: "loginform"})
+              // this.authStore.setUser(sessionStorage.getItem("userId"));
+              this.user = {}
+              this.authStore.logout();
+              this.router.replace({ name: "docgia" });
+              // this.$router.push({name: "docgia"})
             },
 
             refreshList() {                

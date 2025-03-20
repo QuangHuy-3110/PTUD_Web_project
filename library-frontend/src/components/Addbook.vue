@@ -30,7 +30,11 @@
             <label for="number" class="form-label">Số quyển</label>
             <Field type="number" class="form-control" name="number" v-model="Localbook.soquyenSach"/>
             <ErrorMessage name="number" class="text-danger" />
-        </div>        
+        </div>  
+        <!-- <div class="col-md-12">
+            <label for="file" class="form-label">Số quyển</label>
+            <input type="file" class="form-control" name="file"/>
+        </div>       -->
         <div class="col-12">
             <button style="margin-right: 20px;" type="reset"  class="btn btn-outline-success">Reset</button>
             <button type="submit" class="btn btn-primary" @click="submitBook">Thêm</button>

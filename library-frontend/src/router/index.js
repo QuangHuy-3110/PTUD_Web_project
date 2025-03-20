@@ -7,7 +7,7 @@ import NotFound from "@/views/NotFound.vue";
 
 const routes = [
     {
-        path: "/",
+        path: "/login",
         name: "loginform",
         component: Login,
     },
@@ -20,10 +20,10 @@ const routes = [
     },
 
     {
-        path: "/docgia",
+        path: "/",
         name: "docgia",
         component: Docgia,
-        meta: { requiresAuth: true },
+        // meta: { requiresAuth: true },
     },
     
     {
@@ -44,7 +44,7 @@ router.beforeEach((to, from, next) => {
   
   if (to.meta.requiresAuth && !authStore.user) {
     // Nếu trang yêu cầu đăng nhập nhưng người dùng chưa đăng nhập, chuyển hướng về trang login
-    next({ name: 'loginform' });
+    next({ name: 'docgia' });
   } else {
     next(); // Nếu không có yêu cầu đăng nhập hoặc người dùng đã đăng nhập, tiếp tục
   }
