@@ -13,6 +13,7 @@ class SachService {
             namXB: payload.namXB,
             maNXB: payload.maNXB,
             tacgia: payload.tacgia,
+            hinhanh: payload.hinhanh,
         };
         // remove undefined fields
         Object.keys(sach).forEach(
