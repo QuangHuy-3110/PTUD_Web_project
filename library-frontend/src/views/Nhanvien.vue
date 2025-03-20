@@ -705,9 +705,9 @@
               this.wsService.connect(); // Mở kết nối WebSocket
 
               // Đăng ký callback để nhận tin nhắn từ WebSocket server
-              this.wsService.onMessage((message) => {
-                this.messages.push(message); // Thêm tin nhắn vào mảng
-              });
+            //   this.wsService.onMessage((message) => {
+            //     this.messages.push(message); // Thêm tin nhắn vào mảng
+            //   });
             },
 
             sendMessage() {

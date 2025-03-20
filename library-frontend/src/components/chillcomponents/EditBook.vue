@@ -31,6 +31,11 @@
             <Field type="number" class="form-control" name="number" v-model="book.soquyenSach"/>
             <ErrorMessage name="number" class="text-danger" />
         </div>        
+        <div class="col-md-12">
+            <label for="file" class="form-label">Hình ảnh</label>
+            <Field type="text" class="form-control" name="picture" v-model="book.hinhanh"/>
+            <ErrorMessage name="picture" class="text-danger" />
+        </div>      
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
           <button type="button" class="btn btn-primary" @click="updatetBook">Lưu thay đổi</button>
@@ -78,6 +83,9 @@ import { Form, Field, ErrorMessage } from "vee-validate";
                     .required("Phải nhập số.")
                     .positive("Số phải là số dương.")
                     .integer("Số phải là số nguyên."),
+                picture: yup
+                    .string()
+                    .required("Hình ảnh phải được gán link.")
             });
             return{
                 contactFormSchema,

@@ -20,6 +20,7 @@
         <p>Năm xuất bản: {{ element.namXB }}</p>
         <p>Mã NXB: {{ element.maNXB }}</p>        
         <p>Số quyển: {{ element.soquyenSach }}</p>
+        <p>Hình ảnh: {{ element.hinhanh }}</p>
 
         <!-- Sử dụng data-bs-toggle để hiển thị modal -->
         <button class="btn btn-warning" style="margin-right: 20px;" @click="getdata(element)" type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop">

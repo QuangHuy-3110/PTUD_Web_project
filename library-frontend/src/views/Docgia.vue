@@ -109,7 +109,7 @@
  <ProfileUser :user="user"/>
 <main>
     <div style="margin-top: 150px;" class="container px-4 text-center">
-      <div class="row gx-5" v-if="nav_pick === 0">
+      <div class="row gx-5" v-if="nav_pick === 0" style="justify-content: center;">
         <Card 
         v-if="filteredTimKiemCount > 0"
         :user="user"

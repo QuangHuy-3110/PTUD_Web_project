@@ -1,10 +1,10 @@
 <template>
-    <div class="card" style="width: 18rem; margin: 10px 10px;" 
+    <div class="card " style="width: 25rem; margin: 20px 20px; " 
         v-for="(book, index) in updatedSachs"
         :key="book._id || index"
         :class="{ active: index === activeIndex }">
-        <!-- <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQgfGb74BzUnGmAZJpOQRVhIvv7__REJ7ycqA&s" class="card-img-top" alt="..."> -->
-        <img src="\src\picture\00001.jpg" class="card-img-top" alt="...">
+        <img v-if="!book.hinhanh" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQgfGb74BzUnGmAZJpOQRVhIvv7__REJ7ycqA&s" class="card-img-top d-block mx-auto" alt="..." style=" width: 230px; height: 330px;">
+        <img v-if="book.hinhanh" :src=book.hinhanh class="card-img-top d-block mx-auto" alt="..." style=" width: 230px; height: 330px;">
         <div class="card-body">
             <h5 class="card-title">{{ book.tenSach }}</h5>
             <p class="card-text" style="text-align: justify;"> 

@@ -31,10 +31,11 @@
             <Field type="number" class="form-control" name="number" v-model="Localbook.soquyenSach"/>
             <ErrorMessage name="number" class="text-danger" />
         </div>  
-        <!-- <div class="col-md-12">
-            <label for="file" class="form-label">Số quyển</label>
-            <input type="file" class="form-control" name="file"/>
-        </div>       -->
+        <div class="col-md-12">
+            <label for="file" class="form-label">Hình ảnh</label>
+            <Field type="text" class="form-control" name="picture" v-model="Localbook.hinhanh"/>
+            <ErrorMessage name="picture" class="text-danger" />
+        </div>      
         <div class="col-12">
             <button style="margin-right: 20px;" type="reset"  class="btn btn-outline-success">Reset</button>
             <button type="submit" class="btn btn-primary" @click="submitBook">Thêm</button>
@@ -75,6 +76,9 @@
                     .required("Phải nhập số.")
                     .positive("Số phải là số dương.")
                     .integer("Số phải là số nguyên."),
+                picture: yup
+                    .string()
+                    .required("Hình ảnh phải được gán link.")
             });
 
             return {
