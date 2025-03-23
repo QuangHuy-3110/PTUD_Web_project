@@ -4,7 +4,7 @@
   v-for="(element, index) in updatedl"
   :key="element._id"
   @click="updateActiveIndex(index)">
-    {{ console.log(activeIndex) }}
+    <!-- {{ console.log(activeIndex) }} -->
     <h2 class="accordion-header">
       <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" :data-bs-target="'#' + element._id" aria-expanded="false" :aria-controls="element._id">
         <strong>ID: &nbsp; </strong> {{ element._id }}&nbsp;&nbsp;&nbsp;

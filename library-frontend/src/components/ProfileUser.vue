@@ -7,7 +7,7 @@
 
 <!-- Modal -->
 <div class="modal fade" :id="'profileModal' + this.user._id" tabindex="-1" role="dialog" :aria-labelledby="'profileModalLabel' + this.user._id" aria-hidden="true">
-    {{ console.log(user) }}
+    <!-- {{ console.log(user) }} -->
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">

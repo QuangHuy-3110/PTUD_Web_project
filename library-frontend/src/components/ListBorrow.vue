@@ -55,7 +55,7 @@ export default {
     // Cập nhật dl khi list thay đổi
     list: {
       handler(newValue) {
-        console.log("Danh sách mới:", newValue);
+        // console.log("Danh sách mới:", newValue);
         this.dl = [...newValue]; // Tạo bản sao, tránh thay đổi trực tiếp
       },
       deep: true,

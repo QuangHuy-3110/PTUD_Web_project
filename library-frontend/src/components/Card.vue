@@ -46,7 +46,7 @@ export default {
     sachs: {
         immediate: true, // Chạy ngay khi component mounted
         handler: async function (newSachs) {
-            console.log("New data received:", newSachs);
+            // console.log("New data received:", newSachs);
 
             // Dùng Promise.all để đảm bảo các dữ liệu bất đồng bộ được xử lý xong trước khi cập nhật
             const filteredBooks = await Promise.all(newSachs.map(async (book) => {
@@ -71,7 +71,7 @@ export default {
 
             // Lọc bỏ các đối tượng không hợp lệ (null)
             this.updatedSachs = filteredBooks.filter(book => book !== null);
-            console.log("Filtered and updatedSachs:", this.updatedSachs);
+            // console.log("Filtered and updatedSachs:", this.updatedSachs);
         }
     }
 },

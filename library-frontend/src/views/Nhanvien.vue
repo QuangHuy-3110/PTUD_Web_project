@@ -487,9 +487,9 @@
 
             async update_slSach_t(id){
                 try{
-                    console.log(id)
+                    // console.log(id)
                     let Sach = await SachService.get(id);
-                    console.log(Sach)
+                    // console.log(Sach)
                     Sach.soquyenSach = Sach.soquyenSach + 1;
                     await SachService.update(id, Sach)
                     this.wsService.sendMessage(JSON.stringify(Sach));
@@ -500,7 +500,7 @@
 
             async update_Sach(book){
                 try{
-                    console.log(book)
+                    // console.log(book)
                     this.wsService.sendMessage(JSON.stringify(book));
                 }catch(error) {
                     console.log(error)
@@ -511,7 +511,7 @@
                 try{
                     // console.log(id)
                     let Sach = await SachService.get(element.maSach);
-                    console.log(Sach)
+                    // console.log(Sach)
                     Sach.soquyenSach = Sach.soquyenSach - 1;
                     await SachService.update(element.maSach, Sach)
                     this.wsService.sendMessage(JSON.stringify(element));
@@ -595,7 +595,7 @@
 
             async createBook(data) {
                 try {
-                    console.log(data)
+                    // console.log(data)
                     await SachService.create(data);
                     this.wsService.sendMessage(data);
                     await this.retrieveBooks()

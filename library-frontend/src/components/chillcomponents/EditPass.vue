@@ -64,9 +64,9 @@ import bcrypt from 'bcryptjs';
                 }else if(this.passNew1 !== this.passNew2){
                     alert("Mật khẩu không trùng khớp")
                 }else{
-                    console.log(this.passNew1)
+                    // console.log(this.passNew1)
                     this.nhanvienMK.matkhauNV = await this.hashPassword(this.passNew1)
-                    console.log(this.nhanvienMK.matkhauNV)
+                    // console.log(this.nhanvienMK.matkhauNV)
                     if (confirm("Hoàn tất!")) {
                         try {
                             // Gọi phương thức update trực tiếp từ nhanvienService

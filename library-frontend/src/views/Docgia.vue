@@ -309,7 +309,7 @@
           getList_Sach() {
             try {                
                 if (!this.messages || this.messages.length === 0) {
-                    console.warn("Danh sách messages rỗng hoặc undefined:", this.messages);
+                    // console.warn("Danh sách messages rỗng hoặc undefined:", this.messages);
                     return [];
                 }
 
@@ -318,13 +318,13 @@
                     .map((msg, index) => {
                         try {
                             if (!msg) {
-                                console.warn(`Tin nhắn ở index ${index} bị undefined hoặc null`);
+                                // console.warn(`Tin nhắn ở index ${index} bị undefined hoặc null`);
                                 return null;
                             }
 
                             // Nếu tin nhắn có dạng `{ message: 'Welcome to WebSocket server!' }`, bỏ qua
                             if (typeof msg === "object" && msg.message === "Welcome to WebSocket server!") {
-                                console.warn(`Bỏ qua tin nhắn chào WebSocket ở index ${index}`);
+                                // console.warn(`Bỏ qua tin nhắn chào WebSocket ở index ${index}`);
                                 return null;
                             }
 
@@ -343,7 +343,7 @@
 
                             // Nếu parsedMsg có 'message' là "Welcome to WebSocket server!", bỏ qua
                             if (parsedMsg?.message === "Welcome to WebSocket server!") {
-                                console.warn(`Bỏ qua tin nhắn chào WebSocket ở index ${index}`);
+                                // console.warn(`Bỏ qua tin nhắn chào WebSocket ở index ${index}`);
                                 return null;
                             }
 
@@ -353,14 +353,14 @@
 
                                 // Bỏ qua tin nhắn có type === "ping"
                                 if (parsedData?.type === "ping") {
-                                    console.log("Bỏ qua tin nhắn ping:", parsedData);
+                                    // console.log("Bỏ qua tin nhắn ping:", parsedData);
                                     return null;
                                 }
 
                                 return parsedData;
                             }
 
-                            console.warn(`Tin nhắn không có thuộc tính 'data' ở index ${index}`, parsedMsg);
+                            // console.warn(`Tin nhắn không có thuộc tính 'data' ở index ${index}`, parsedMsg);
                             return null;
                         } catch (error) {
                             console.error(`Lỗi khi phân tích JSON ở index ${index}:`, error);
@@ -368,7 +368,7 @@
                         }
                     })
                     .filter((item) => item !== null) // Loại bỏ giá trị null
-                    console.log("hien thi messages",this.messages)
+                    // console.log("hien thi messages",this.messages)
                 // Gộp với danh sách sách
                 this.messages = this.sachs.concat(this.messages);
                 // Xóa trùng lặp theo `_id`
@@ -410,7 +410,7 @@
 
             async deleteTheoDoi(id){
               try {
-                console.log(id)
+                // console.log(id)
                 await theodoiService.delete(id)
                 this.getList_y()
               }catch (error){
@@ -436,7 +436,7 @@
               if (!this.user) {
                 this.$router.replace({ name: "login" });
               }
-              this.role = this.$route.name === "docgia" ? "Độc giả" : "Nhân viên";
+              // this.role = this.$route.name === "docgia" ? "Độc giả" : "Nhân viên";
             },
 
             async Addtheodoi(book){              
@@ -470,7 +470,7 @@
               try{
                 this.list_m = await theodoiService.get_trangthai('m')
                 this.list_m = this.list_m.filter(item => item.maDG === this.user._id)
-                console.log(this.list_m)
+                // console.log(this.list_m)
               }catch (error){
                 console.log(error)
                 this.list_m = [];
@@ -481,7 +481,7 @@
               try{
                 this.list_y = await theodoiService.get_trangthai('y')
                 this.list_y = this.list_y.filter(item => item.maDG === this.user._id)
-                console.log(this.list_y)
+                // console.log(this.list_y)
               }catch (error){
                 console.log(error)
                 this.list_y = [];
@@ -492,7 +492,7 @@
               try{
                 this.list_t = await theodoiService.get_trangthai('t')
                 this.list_t = this.list_t.filter(item => item.maDG === this.user._id)
-                console.log(this.list_t)
+                // console.log(this.list_t)
               }catch (error){
                 console.log(error)
                 this.list_t = [];
