@@ -24,6 +24,10 @@ app.use("/api/nxb", nxbRouter);
 app.use("/api/sach", sachRouter);
 app.use("/api/theodoi", theodoiRouter);
 
+const emailRouter = require('./app/routes/email.route'); // Import router email
+app.use('/api/email', emailRouter);  // API gửi email sẽ có đường dẫn: /api/email/send
+
+
 
 //handle 404 response
 app.use((req, res, next) => {

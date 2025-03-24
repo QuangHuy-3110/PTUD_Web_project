@@ -1,5 +1,7 @@
 const { ObjectId } = require('mongodb');
 const bcrypt = require('bcryptjs');
+const crypto = require("crypto");
+const sendEmail = require("./email.service");
 
 class DocgiaService {
     constructor(client) {
@@ -12,7 +14,20 @@ class DocgiaService {
         return hashedPassword;
     }
 
+    generateSecureRandomString() {
+        const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        let result = "";
+        const array = new Uint8Array(6);
+        crypto.getRandomValues(array);
+        array.forEach((num) => {
+            result += chars[num % chars.length];
+        });
+        return result;
+    }
+
+
     async extractDocgiaData(payload) {
+        const pass = this.generateSecureRandomString()
         const docgia = {
             _id: payload._id,
             tenDG: payload.tenDG,
@@ -21,24 +36,31 @@ class DocgiaService {
             ngaysinhDG: payload.ngaysinhDG,
             dienthoaiDG: payload.dienthoaiDG,
             taikhoanDG: payload._id,
-            matkhauDG: await this.hashPassword('1'),
+            emailDG: payload.emailDG,
+            matkhauDG: await this.hashPassword(pass),
         };
         // remove undefined fields
         Object.keys(docgia).forEach(
             (key) => docgia[key] === undefined && delete docgia[key]
         );
-        return docgia;
+        return { docgia: docgia, plainPassword: pass };
     }
 
     async create(payload) {
         
-        const docgia = await this.extractDocgiaData(payload);
+        const { docgia, plainPassword } = await this.extractDocgiaData(payload);
         
         const result = await this.Docgia.findOneAndUpdate(
-            docgia,
+            docgia, // ✅ Đúng: Tìm theo _id để cập nhật
             { $set: docgia },
             { returnDocument: 'after', upsert: true }
-            );
+        );
+
+        await sendEmail(
+            docgia.emailDG,
+            'Thông tin tài khoản đọc giả của bạn',
+            `Xin chào ${docgia.tenDG},\n\nTài khoản của bạn đã được tạo thành công.\nTên đăng nhập: ${docgia.taikhoanDG}\nMật khẩu: ${plainPassword}\n\nVui lòng đổi mật khẩu sau khi đăng nhập.`
+        );
         return result;
     }
 

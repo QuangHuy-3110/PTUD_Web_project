@@ -1,6 +1,7 @@
 const { ObjectId } = require('mongodb');
 const bcrypt = require('bcryptjs');
-
+const crypto = require("crypto");
+const sendEmail = require("./email.service");
 
 class NhanvienService {
     constructor(client) {
@@ -14,8 +15,19 @@ class NhanvienService {
         return hashedPassword;
     }
 
+    generateSecureRandomString() {
+        const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        let result = "";
+        const array = new Uint8Array(6);
+        crypto.getRandomValues(array);
+        array.forEach((num) => {
+            result += chars[num % chars.length];
+        });
+        return result;
+    }
+
     async extractNhanvienData(payload) {
-        const mk = await this.hashPassword('1')
+        const pass = this.generateSecureRandomString()
          const nhanvien = {
             _id: payload._id,
             tenNV: payload.tenNV,
@@ -23,24 +35,31 @@ class NhanvienService {
             chucvuNV: payload.chucvuNV,
             dienthoaiNV: payload.dienthoaiNV,
             taikhoanNV: payload._id,
-            matkhauNV: mk,
+            emailNV: payload.emailNV,
+            matkhauNV: await this.hashPassword(pass),
         };
         // remove undefined fields
         Object.keys(nhanvien).forEach(
             (key) => nhanvien[key] === undefined && delete nhanvien[key]
         );
-        return nhanvien;
+        return { nhanvien: nhanvien, plainPassword: pass };
     }
 
     async create(payload) {
         
-        const nhanvien = await this.extractNhanvienData(payload);
+        const {nhanvien, plainPassword } = await this.extractNhanvienData(payload);
         
         const result = await this.Nhanvien.findOneAndUpdate(
-            nhanvien,
+             nhanvien, // ✅ Đúng: Tìm theo _id để cập nhật
             { $set: nhanvien },
             { returnDocument: 'after', upsert: true }
-            );
+        );
+
+        await sendEmail(
+            nhanvien.emailNV,
+            'Thông tin tài khoản nhân viên của bạn',
+            `Xin chào ${nhanvien.tenNV},\n\nTài khoản của bạn đã được tạo thành công.\nTên đăng nhập: ${nhanvien.taikhoanNV}\nMật khẩu: ${plainPassword}\n\nVui lòng đổi mật khẩu sau khi đăng nhập.`
+        );
         return result;
     }
 
