@@ -1,12 +1,9 @@
 <template>
- <div 
-  class="accordion-item"
-  v-for="(element, index) in updatedl"
-  :key="element._id"
-  @click="updateActiveIndex(index)">
+  <div class="accordion-item" v-for="(element, index) in updatedl" :key="element._id" @click="updateActiveIndex(index)">
     <!-- {{ console.log(activeIndex) }} -->
     <h2 class="accordion-header">
-      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" :data-bs-target="'#' + element._id" aria-expanded="false" :aria-controls="element._id">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+        :data-bs-target="'#' + element._id" aria-expanded="false" :aria-controls="element._id">
         <strong>ID: &nbsp; </strong> {{ element._id }}&nbsp;&nbsp;&nbsp;
         <strong>Tên nhân viên: &nbsp; </strong> {{ element.tenNV }}
       </button>
@@ -19,18 +16,22 @@
         <p>Số điện thoại: {{ element.dienthoaiNV }}</p>
         <p>Địa chỉ: {{ element.diachiNV }}</p>
         <p>Tài khoản: {{ element.taikhoanNV }}</p>
+        <p>Email: {{ element.emailNV }}</p>
       </div>
-        <button class="btn btn-warning" style="margin-right: 20px;" @click="getdata(element)" type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-          <i class="fas fa-edit"></i> Chỉnh sửa
-        </button>
-        <button class="btn btn-danger" @click="getdelete(element)">
-          <i class="fas fa-trash"></i> Xóa
-        </button>
-    </div>    
-  </div> 
+      <button class="btn btn-warning" style="margin-right: 20px;" @click="getdata(element)" type="button"
+        data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+        <i class="fas fa-edit"></i> Chỉnh sửa
+      </button>
+      <button class="btn btn-danger" @click="getdelete(element)">
+        <i class="fas fa-trash"></i> Xóa
+      </button>
+      <button type="button" class="btn btn-secondary m-3" @click="Resetpass(element)">Reset Password</button>
+    </div>
+  </div>
 
   <!-- Modal -->
-  <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
@@ -39,9 +40,7 @@
         </div>
         <div class="modal-body">
           <!-- Chỉ hiển thị khi có dữ liệu sách -->
-          <EditStaff 
-          :nhanvien="staff" v-if="staff && staff._id" 
-          :role="role"/>
+          <EditStaff :nhanvien="staff" v-if="staff && staff._id" :role="role" />
         </div>
       </div>
     </div>
@@ -74,8 +73,13 @@ import EditStaff from './chillcomponents/EditStaff.vue';
         }
     },
 
-    emits: ["update:activeIndex", "delete:staff"],
+  emits: ["update:activeIndex", "delete:staff", "Resetpass:staff"],
     methods: {
+
+      Resetpass(element) {
+        // this.$emit("delete:user", element);
+        this.$emit("Resetpass:staff", element);
+      },
       // Cập nhật index của item được chọn
       updateActiveIndex(index) {
         this.$emit("update:activeIndex", index);

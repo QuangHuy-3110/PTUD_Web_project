@@ -30,7 +30,9 @@
 </template>
 
 <script>
+import emailService from '@/services/email.service';
 import sachService from '@/services/sach.service';
+import docgiaService from '@/services/docgia.service';
 export default {
   props: {
     nhanvien: { type: Number, default: 0 },
@@ -48,6 +50,7 @@ export default {
   data() {
     return {
       dl: [...this.list], // Danh sách dữ liệu hiển thị
+      docgia: {}
     };
   },
 
@@ -91,13 +94,20 @@ export default {
       this.removeFromList(element._id);
     },
 
-    pay(element) {
+    async pay(element) {
       try{
+        this.docgia = await docgiaService.get(element.maDG)
         element.trangthai = "t"; // Đã trả
         element.ngaytra = new Date().toLocaleDateString();
+        this.removeFromList(element._id);
         this.$emit("update:theodoi_t", element);
         this.$emit("update:sach_t", element.maSach)
-        this.removeFromList(element._id);
+        await emailService.sendEmail(
+          this.docgia.emailDG,
+          `Xác nhận sách ${element.maSach} đã được trả`,
+          `Chào bạn, đây là email xác nhận sách ${element.maSach} của bạn đã được trả thành công.
+            Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi!.`
+        );
       }catch(error){
         console.log(error)
       }

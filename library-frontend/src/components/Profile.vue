@@ -61,6 +61,10 @@
                                             <div class="col-md-6"><label>Chức vụ</label></div>
                                             <div class="col-md-6"><p>{{ user.chucvuNV }}</p></div>
                                         </div>
+                                        <div class="row">
+                                            <div class="col-md-6"><label>Email</label></div>
+                                            <div class="col-md-6"><p>{{ user.emailNV }}</p></div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

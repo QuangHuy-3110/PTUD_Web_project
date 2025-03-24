@@ -55,19 +55,82 @@
 <div class="container-fluid bg-light-subtle">    
     <div class="row flex-nowrap">
         <div class="col-2 px-2 bg-dark-subtle ">
-            <div id="sidebar" class="collapse collapse-horizontal show border-end bg-secondary-subtle" >
+            <div id="sidebar" class="collapse collapse-horizontal show border-end bg-secondary-subtle " >
                 <div id="sidebar-nav" class="list-group border-0 rounded-0 text-sm-start min-vh-100 ">
-                    <a href="#" class="list-group-item border-end-0 rounded-3 mt-2 d-inline-block text-truncate bg-white" @click="pick_nav=11" v-if="user.chucvuNV === 'Giám đốc'"><span>Xem nhân viên</span> </a>
-                    <a href="#" class="list-group-item border-end-0 rounded-3 mt-2 d-inline-block text-truncate bg-white" @click="pick_nav=10" v-if="user.chucvuNV === 'Giám đốc'"><span>Thêm nhân viên</span> </a>
-                    <a href="#" class="list-group-item border-end-0 rounded-3 mt-2 d-inline-block text-truncate bg-white" @click="pick_nav=1"><span>Thêm sách</span> </a>
-                    <a href="#" class="list-group-item border-end-0 rounded-3 mt-2 d-inline-block text-truncate bg-white" @click="pick_nav = 2"><span>Thêm độc giả</span> </a>
-                    <a href="#" class="list-group-item border-end-0 rounded-3 mt-2 d-inline-block text-truncate bg-white" @click="pick_nav = 3"><span>Thêm nhà xuất bản</span> </a>
-                    <a href="#" class="list-group-item border-end-0 rounded-3 mt-2 d-inline-block text-truncate bg-white" @click="pick_nav = 4, update_y"><span>Xử lý yêu cầu mượn sách</span> </a>
-                    <a href="#" class="list-group-item border-end-0 rounded-3 mt-2 d-inline-block text-truncate bg-white" @click="pick_nav = 5, updateList_m"><span>Xem thông tin mượn sách</span> </a>                    
-                    <a href="#" class="list-group-item border-end-0 rounded-3 mt-2 d-inline-block text-truncate bg-white" @click="pick_nav = 6"><span>Xem thông tin độc giả</span> </a>                    
-                    <a href="#" class="list-group-item border-end-0 rounded-3 mt-2 d-inline-block text-truncate bg-white" @click="pick_nav = 7"><span>Xem tất cả các sách</span> </a>
-                    <a href="#" class="list-group-item border-end-0 rounded-3 mt-2 d-inline-block text-truncate bg-white" @click="pick_nav = 8"><span>Xem tất cả nhà xuất bản</span> </a>
-                    <a href="#" class="list-group-item border-end-0 rounded-3 mt-2 d-inline-block text-truncate bg-white" @click="pick_nav = 9, updateList_t"><span>Xem tất cả các sách đã trả</span> </a>
+
+                    <div class="accordion" id="accordionExample">
+
+                        <div class="accordion-item" v-if="user.chucvuNV === 'Giám đốc'">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button list-group-item" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                    Quản lý nhân viên
+                                </button>
+                            </h2>
+                            <div id="collapseOne" class="accordion-collapse collapse show bg-dark-subtle" data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+                                    <a href="#" class="list-group-item rounded-3 mt-2 bg-white" @click="pick_nav=10" v-if="user.chucvuNV === 'Giám đốc'"><span>Thêm nhân viên</span> </a>
+                                    <a href="#" class="list-group-item rounded-3 mt-2 bg-white" @click="pick_nav=11" v-if="user.chucvuNV === 'Giám đốc'"><span>Xem nhân viên</span> </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed list-group-item" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                    Quản lý sách
+                                </button>
+                            </h2>
+                            <div id="collapseTwo" class="accordion-collapse collapse bg-dark-subtle" data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+                                    <a href="#" class="list-group-item rounded-3 mt-2 bg-white" @click="pick_nav=1"><span>Thêm sách</span> </a>
+                                    <a href="#" class="list-group-item rounded-3 mt-2 bg-white" @click="pick_nav = 7"><span>Xem tất cả các sách</span> </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed list-group-item" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                    Quản lý đọc giả
+                                </button>
+                            </h2>
+                            <div id="collapseThree" class="accordion-collapse collapse bg-dark-subtle" data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+                                    <a href="#" class="list-group-item rounded-3 mt-2 bg-white" @click="pick_nav = 2"><span>Thêm độc giả</span> </a>
+                                    <a href="#" class="list-group-item rounded-3 mt-2 bg-white" @click="pick_nav = 6"><span>Xem thông tin độc giả</span> </a> 
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed list-group-item" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                    Quản lý nhà xuất bản
+                                </button>
+                            </h2>
+                            <div id="collapseFour" class="accordion-collapse collapse bg-dark-subtle" data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+                                    <a href="#" class="list-group-item rounded-3 mt-2 bg-white" @click="pick_nav = 3"><span>Thêm nhà xuất bản</span> </a>
+                                    <a href="#" class="list-group-item rounded-3 mt-2 bg-white" @click="pick_nav = 8"><span>Xem tất cả nhà xuất bản</span> </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed list-group-item" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                                    Giải quyết mượn trả
+                                </button>
+                            </h2>
+                            <div id="collapseFive" class="accordion-collapse collapse bg-dark-subtle" data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+                                    <a href="#" class="list-group-item rounded-3 mt-2 bg-white" @click="pick_nav = 4, update_y"><span>Xử lý yêu cầu mượn sách</span> </a>
+                                    <a href="#" class="list-group-item rounded-3 mt-2 bg-white" @click="pick_nav = 5, updateList_m"><span>Xem thông tin mượn sách</span> </a>                    
+                                    <a href="#" class="list-group-item rounded-3 mt-2  bg-white" @click="pick_nav = 9, updateList_t"><span>Xem tất cả các sách đã trả</span> </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <a href="#" class="list-group-item border-end-0 rounded-3 mt-2 d-inline-block text-truncate bg-success text-white p-3" @click="pick_nav = 0"><span>Làm mới</span> </a>
                 </div>
             </div>
@@ -87,7 +150,8 @@
                                 :list= "filteredTimkiem"
                                 :role="user.chucvuNV"
                                 v-model:activeIndex="activeIndex"
-                                @delete:staff="deleteStaff"/>
+                                @delete:staff="deleteStaff"
+                                @Resetpass:staff="resetStaff"/>
                             </div>
                         </div>
                     </div>
@@ -170,7 +234,8 @@
                                 v-if="filteredTimKiemCount > 0"
                                 :list= "filteredTimkiem"
                                 v-model:activeIndex="activeIndex"
-                                @delete:user="deleteUser"/>
+                                @delete:user="deleteUser"
+                                @Resetpass:user="resetPass"/>
                             </div>
                         </div>
                     </div>
@@ -450,6 +515,30 @@
 
      
         methods: {
+            async resetStaff(element){
+                if (confirm("Bạn muốn reset mật khẩu của nhân viên này?")) {
+                    try {
+                        await nhanvienService.delete(element._id);
+                        await nhanvienService.create(element)
+                        this.retrieveStaff()
+                    } catch (error) {
+                        console.log(error);
+                    }
+                }
+            },
+
+            async resetPass(element){
+                if (confirm("Bạn muốn reset mật khẩu của đọc giả này?")) {
+                    try {
+                        await DocgiaService.delete(element._id);
+                        await DocgiaService.create(element)
+                        this.retrieveUser()
+                    } catch (error) {
+                        console.log(error);
+                    }
+                }
+            },
+
             update_message(id){
                 this.list_m = this.list_m.filter(item => item._id !== id)
             },

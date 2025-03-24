@@ -19,18 +19,25 @@
 
         <div class="col-md-5">
             <label class="form-label" for="sdt">Số điện thoại</label>
-            <Field type="text" class="form-control" name="sdt"v-model="LocalStaff.dienthoaiNV" />
+            <Field type="text" class="form-control" name="sdt" v-model="LocalStaff.dienthoaiNV" />
             <ErrorMessage name="sdt" class="text-danger" />
         </div>
-        
+
+        <div class="col-md-5">
+            <label class="form-label" for="email">Email</label>
+            <Field type="text" class="form-control" name="email" v-model="LocalStaff.emailNV" />
+            <ErrorMessage name="email" class="text-danger" />
+        </div>
+
         <div class="col-9">
             <label for="inputAddress" class="form-label" name="diachiDG">Địa chỉ</label>
-            <Field type="text" class="form-control" name="inputAddress" placeholder="1234 Main St"v-model="LocalStaff.diachiNV"/>
+            <Field type="text" class="form-control" name="inputAddress" placeholder="1234 Main St"
+                v-model="LocalStaff.diachiNV" />
             <ErrorMessage name="inputAddress" class="text-danger" />
-        </div>        
+        </div>
         <div class="col-12">
-            <button style="margin-right: 20px;" type="reset"  class="btn btn-outline-success">Reset</button>
-            <button type="submit"  class="btn btn-primary" @click="submitStaff">Tạo</button>
+            <button style="margin-right: 20px;" type="reset" class="btn btn-outline-success">Reset</button>
+            <button type="submit" class="btn btn-primary" @click="submitStaff">Tạo</button>
         </div>
     </Form>
 </template>
@@ -70,6 +77,11 @@
                     .string()
                     .required("Tên phải có giá trị.")
                     .max(100, "Địa chỉ tối đa 100 ký tự."),
+                email: yup
+                    .string()
+                    .email("Email không hợp lệ.") // Kiểm tra email đúng định dạng
+                    .required("Email không được để trống.") // Bắt buộc nhập
+                    .max(100, "Email tối đa 100 ký tự."), // Giới hạn độ dài
             });
             return {
                 LocalStaff: { 

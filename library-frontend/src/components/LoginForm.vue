@@ -29,11 +29,10 @@
 <script>
 export default {    
     emits: ["submit:form"],
-
     data(){
       return {
           userInput: "",
-          passInput: ""
+          passInput: "",
       };
     },
 

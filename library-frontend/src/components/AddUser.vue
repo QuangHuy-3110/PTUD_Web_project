@@ -12,17 +12,22 @@
         </div>
         <div class="col-md-3">
             <label class="form-label" for="sdt">Số điện thoại</label>
-            <Field type="text" class="form-control" name="sdt"v-model="LocalUser.dienthoaiDG" />
+            <Field type="text" class="form-control" name="sdt" v-model="LocalUser.dienthoaiDG" />
             <ErrorMessage name="sdt" class="text-danger" />
+        </div>
+        <div class="col-md-3">
+            <label class="form-label" for="email">Email</label>
+            <Field type="text" class="form-control" name="email" v-model="LocalUser.emailDG" />
+            <ErrorMessage name="email" class="text-danger" />
         </div>
         <div class="col-md-4">
             <label class="form-label" for="born">Ngày sinh</label>
             <Field type="date" name="born" class="form-control" v-model="LocalUser.ngaysinhDG" />
             <ErrorMessage name="born" class="text-danger" />
         </div>
-        
+
         <div class="col-md-3">
-            <label for="inputState" class="form-label" >Giới tính</label>
+            <label for="inputState" class="form-label">Giới tính</label>
             <Field as="select" name="gioitinh" class="form-select" v-model="LocalUser.gioitinhDG">
                 <option value="Nam">Nam</option>
                 <option value="Nữ">Nữ</option>
@@ -32,12 +37,13 @@
         </div>
         <div class="col-10">
             <label for="inputAddress" class="form-label" name="diachiDG">Địa chỉ</label>
-            <Field type="text" class="form-control" name="inputAddress" placeholder="1234 Main St"v-model="LocalUser.diachiDG"/>
+            <Field type="text" class="form-control" name="inputAddress" placeholder="1234 Main St"
+                v-model="LocalUser.diachiDG" />
             <ErrorMessage name="inputAddress" class="text-danger" />
-        </div>        
+        </div>
         <div class="col-12">
-            <button style="margin-right: 20px;" type="reset"  class="btn btn-outline-success">Reset</button>
-            <button type="submit"  class="btn btn-primary" @click="submitUser">Tạo</button>
+            <button style="margin-right: 20px;" type="reset" class="btn btn-outline-success">Reset</button>
+            <button type="submit" class="btn btn-primary" @click="submitUser">Tạo</button>
         </div>
     </Form>
 </template>
@@ -78,6 +84,11 @@
                     .string()
                     .required("Tên phải có giá trị.")
                     .max(100, "Địa chỉ tối đa 100 ký tự."),
+                email: yup
+                    .string()
+                    .email("Email không hợp lệ.") // Kiểm tra email đúng định dạng
+                    .required("Email không được để trống.") // Bắt buộc nhập
+                    .max(100, "Email tối đa 100 ký tự."), // Giới hạn độ dài
             });
             return {
                 LocalUser: { 

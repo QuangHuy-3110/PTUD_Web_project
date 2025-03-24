@@ -30,7 +30,9 @@
 </template>
 
 <script>
+import emailService from '@/services/email.service';
 import sachService from '@/services/sach.service';
+import docgiaService from '@/services/docgia.service';
 export default {
   props: {
     nhanvien: { type: Number, default: 0 },
@@ -49,6 +51,7 @@ export default {
   data() {
     return {
       dl: [...this.list], // Danh sách dữ liệu hiển thị
+      docgia: {}
     };
   },
 
@@ -71,12 +74,20 @@ export default {
 
     async accept(element) {
       try{
+        this.docgia = await docgiaService.get(element.maDG)
         let sach = await sachService.get(element.maSach)
         if(sach.soquyenSach !== 0){
           element.trangthai = "m"; // Đang mượn
           element.ngaymuon = new Date().toLocaleDateString();
           this.$emit("update:sach_m", element)
           this.$emit("update:theodoi", element);
+          
+          await emailService.sendEmail(
+            this.docgia.emailDG,
+            `Yêu cầu mượn sách ${element.maSach} có tên là ${sach.tenSach} đã được chấp nhận`,
+            `Chào bạn, đây là email thông báo yêu cầu mượn sách ${element.maSach} có tên là ${sach.tenSach} của bạn đã được chấp nhận.
+              Sách của bạn đã được chuẩn bị xong, mời bạn đến nhận sách.`
+          );
           this.removeFromList(element._id);
         }else{
           alert(`Đã hết sách ${element.maSach}, không thể cho mượn!`)
@@ -86,13 +97,21 @@ export default {
       }  
     },
 
-    reject(element) {
+    async reject(element) {
+      this.docgia = await docgiaService.get(element.maDG)
+      this.removeFromList(element._id);
       element.trangthai = "f"; // Từ chối
       this.$emit("update:theodoi", element);
-      this.removeFromList(element._id);
+      await emailService.sendEmail(
+        this.docgia.emailDG,
+        `Yêu cầu mượn sách ${element.maSach} bị từ chối`,
+        `Chào bạn, đây là email thông báo yêu cầu mượn sách ${element.maSach} của bạn bị từ chối.
+          Vì một vài lý do khách quan nên sách của bạn không thể cho mượn. Chúng tôi rất tiếc và rất mong bạn
+          thông cảm vì sự bất tiện này!`
+      );
     },
 
-    pay(element) {
+    async pay(element) {
       try{
         element.trangthai = "t"; // Đã trả
         element.ngaytra = new Date().toLocaleDateString();
