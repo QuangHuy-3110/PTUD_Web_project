@@ -9,6 +9,7 @@ class TheodoiService {
         const theodoi = {
             maSach: payload.maSach,
             maDG: payload.maDG,
+            maNV: payload.maNV,
             ngaymuon: payload.ngaymuon,
             trangthai: payload.trangthai,
             ngaytra: payload.ngaytra,
