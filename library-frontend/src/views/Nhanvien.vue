@@ -96,8 +96,8 @@
                             </h2>
                             <div id="collapseThree" class="accordion-collapse collapse bg-dark-subtle" data-bs-parent="#accordionExample">
                                 <div class="accordion-body">
-                                    <a href="#" class="list-group-item rounded-3 mt-2 bg-white" @click="pick_nav = 2"><span>Thêm độc giả</span> </a>
-                                    <a href="#" class="list-group-item rounded-3 mt-2 bg-white" @click="pick_nav = 6"><span>Xem thông tin độc giả</span> </a> 
+                                    <a href="#" class="list-group-item rounded-3 mt-2 bg-white" @click="pick_nav = 2"><span>Thêm đọc giả</span> </a>
+                                    <a href="#" class="list-group-item rounded-3 mt-2 bg-white" @click="pick_nav = 6"><span>Xem thông tin đọc giả</span> </a> 
                                 </div>
                             </div>
                         </div>
@@ -194,6 +194,7 @@
                                 <p v-if="messages.length === 0"> Không có yêu cầu nào!</p>
                                 <ListBorrow_y
                                 :nhanvien=1
+                                :user="user"
                                 :list= "getList_y"
                                 v-model:activeIndex="activeIndex"
                                 @update:theodoi="updateTTtheodoi"
@@ -214,6 +215,7 @@
                                 <ListBorrow
                                 v-if="filteredTimKiemCount > 0"
                                 :nhanvien=1
+                                :user="user"
                                 v-model:list= "filteredTimkiem"
                                 v-model:activeIndex="activeIndex"
                                 @update:sach_t = "update_slSach_t"

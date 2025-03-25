@@ -15,8 +15,9 @@
       <div class="accordion-body" style="text-align: left;">
         <p>Mã đọc giả: {{ element.maDG }}</p>
         <p>Mã sách: {{ element.maSach }}</p>
-        <p>Ngày mượn: {{ element.ngaymuon }}</p>
+        <p v-if="element.ngaymuon">Ngày mượn: {{ element.ngaymuon }}</p>
         <p v-if="element.ngaytra">Ngày trả: {{ element.ngaytra }}</p>
+        <p v-if="element.maNV">Người thu hồi: {{ element.maNV }}</p>
         <p>Trạng thái: <strong class="text-danger">{{ readTrangthai(element.trangthai) }}</strong></p>        
       </div>
       <div class="p-2">
@@ -35,6 +36,7 @@ import sachService from '@/services/sach.service';
 import docgiaService from '@/services/docgia.service';
 export default {
   props: {
+    user: {type: Object, default: null},
     nhanvien: { type: Number, default: 0 },
     list: { type: Array, default: () => [] },
     activeIndex: { type: Number, default: -1 },
@@ -115,6 +117,7 @@ export default {
       try{
         element.trangthai = "t"; // Đã trả
         element.ngaytra = new Date().toLocaleDateString();
+        element.maNV = this.user._id;
         this.$emit("update:theodoi_t", element);
         this.$emit("update:sach_t", element.maSach)
         this.removeFromList(element._id);
