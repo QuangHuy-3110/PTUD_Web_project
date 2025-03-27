@@ -49,11 +49,19 @@ class NhanvienService {
         
         const {nhanvien, plainPassword } = await this.extractNhanvienData(payload);
         
-        const result = await this.Nhanvien.findOneAndUpdate(
-             nhanvien, // ✅ Đúng: Tìm theo _id để cập nhật
-            { $set: nhanvien },
-            { returnDocument: 'after', upsert: true }
-        );
+        // const result = await this.Nhanvien.findOneAndUpdate(
+        //      nhanvien, // ✅ Đúng: Tìm theo _id để cập nhật
+        //     { $set: nhanvien },
+        //     { returnDocument: 'after', upsert: true }
+        // );
+        // Kiểm tra nếu nhân viên đã tồn tại
+        const existingNhanvien = await this.Nhanvien.findOne({ _id: nhanvien._id });
+        if (existingNhanvien) {
+            throw new Error('Tài khoản nhân viên đã tồn tại!');
+        }
+
+        // Tạo nhân viên mới
+        const result = await this.Nhanvien.insertOne(nhanvien);
 
         await sendEmail(
             nhanvien.emailNV,

@@ -26,11 +26,17 @@ class SachService {
         
         const sach = this.extractSachData(payload);
         
-        const result = await this.Sach.findOneAndUpdate(
-            sach,
-            { $set: sach },
-            { returnDocument: 'after', upsert: true }
-            );
+        // const result = await this.Sach.findOneAndUpdate(
+        //     sach,
+        //     { $set: sach },
+        //     { returnDocument: 'after', upsert: true }
+        //     );
+
+        // Kiểm tra nếu sách đã tồn tại
+        const existingSach = await this.Sach.findOne({ _id: sach._id });
+        if (existingSach) {
+            throw new Error('Sách đã tồn tại!');
+        }
         return result;
     }
 

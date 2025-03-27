@@ -22,11 +22,17 @@ class NXBService {
         
         const nxb = this.extractNXBData(payload);
         
-        const result = await this.NXB.findOneAndUpdate(
-            nxb,
-            { $set: nxb },
-            { returnDocument: 'after', upsert: true }
-            );
+        // const result = await this.NXB.findOneAndUpdate(
+        //     nxb,
+        //     { $set: nxb },
+        //     { returnDocument: 'after', upsert: true }
+        //     );
+
+        // Kiểm tra nếu NXB đã tồn tại
+        const existingNXB = await this.NXB.findOne({ _id: nxb._id });
+        if (existingNXB) {
+            throw new Error('NXB đã tồn tại!');
+        }
         return result;
     }
 

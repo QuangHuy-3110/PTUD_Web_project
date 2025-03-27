@@ -50,11 +50,20 @@ class DocgiaService {
         
         const { docgia, plainPassword } = await this.extractDocgiaData(payload);
         
-        const result = await this.Docgia.findOneAndUpdate(
-            docgia, // ✅ Đúng: Tìm theo _id để cập nhật
-            { $set: docgia },
-            { returnDocument: 'after', upsert: true }
-        );
+        // const result = await this.Docgia.findOneAndUpdate(
+        //     docgia, // ✅ Đúng: Tìm theo _id để cập nhật
+        //     { $set: docgia },
+        //     { returnDocument: 'after', upsert: true }
+        // );
+
+        // Kiểm tra nếu đã tồn tại độc giả với _id
+        const existingDocgia = await this.Docgia.findOne({ _id: docgia._id });
+        if (existingDocgia) {
+            throw new Error('Tài khoản độc giả đã tồn tại!');
+        }
+
+        // Thêm độc giả mới
+        const result = await this.Docgia.insertOne(docgia);
 
         await sendEmail(
             docgia.emailDG,
