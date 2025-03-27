@@ -45,6 +45,7 @@
 <script>
     import * as yup from "yup";
     import { Form, Field, ErrorMessage } from "vee-validate";
+    import NhanvienService from "@/services/nhanvien.service";
     export default {
         components:{
             Form, Field, ErrorMessage
@@ -92,12 +93,37 @@
                     chucvuNV: "", 
                 },
                 contactFormSchema,
+                duplicateWarning: "",
             };
         },
         methods: {
+
+            // Kiểm tra mã nhân viên trùng lặp
+            async checkDuplicate() {
+                if (this.LocalStaff._id) {
+                    try {
+                        const existingStaff = await NhanvienService.get(this.LocalStaff._id);
+                        this.duplicateWarning = existingStaff ? "Mã nhân viên đã tồn tại!" : "";
+                    } catch (error) {
+                        this.duplicateWarning = "";
+                    }
+                } else {
+                    this.duplicateWarning = "";
+                }
+            },
+            // Gửi dữ liệu lên backend nếu hợp lệ
             submitStaff() {
+                this.checkDuplicate()
+                if (this.duplicateWarning) {
+                    alert("Mã nhân viên đã tồn tại, không thể thêm mới!");
+                    return;
+                }
                 this.$emit("submit:staff", this.LocalStaff);
             },
+
+            // submitStaff() {
+            //     this.$emit("submit:staff", this.LocalStaff);
+            // },
         },
     };
 </script>

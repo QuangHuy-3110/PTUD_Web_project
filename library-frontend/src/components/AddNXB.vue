@@ -17,7 +17,7 @@
         </div>        
         <div class="col-12">
             <button style="margin-right: 20px;" type="reset"  class="btn btn-outline-success">Reset</button>
-            <button type="submit"  class="btn btn-primary" @click="submitNXB">Thêm</button>
+            <button type="submit"  class="btn btn-primary" >Thêm</button>
         </div>
     </Form>
 </template>
@@ -25,6 +25,7 @@
 <script>
     import * as yup from "yup";
     import { Form, Field, ErrorMessage } from "vee-validate";
+    import NXBService from "@/services/nxb.service";
     export default {
         components:{
             Form, Field, ErrorMessage
@@ -53,13 +54,36 @@
                     tenNXB: "", 
                     diachiNXB: "", 
                 },
+                duplicateWarning: "",
                 contactFormSchema,
             };
         },
         methods: {
+            // Kiểm tra mã nhà xuất bản trùng lặp
+            async checkDuplicate() {
+                if (this.LocalNXB._id) {
+                    try {
+                        const existingNXB = await NXBService.get(this.LocalNXB._id);
+                        this.duplicateWarning = existingNXB ? "Mã nhà xuất bản đã tồn tại!" : "";
+                    } catch (error) {
+                        this.duplicateWarning = "";
+                    }
+                } else {
+                    this.duplicateWarning = "";
+                }
+            },
+            // Gửi dữ liệu lên backend nếu hợp lệ
             submitNXB() {
+                this.checkDuplicate()
+                if (this.duplicateWarning) {
+                    alert("Mã nhà xuất bản đã tồn tại, không thể thêm mới!");
+                    return;
+                }
                 this.$emit("submit:nxb", this.LocalNXB);
             },
+            // submitNXB() {
+            //     this.$emit("submit:nxb", this.LocalNXB);
+            // },
 
         },
     };

@@ -38,7 +38,7 @@
         </div>      
         <div class="col-12">
             <button style="margin-right: 20px;" type="reset"  class="btn btn-outline-success">Reset</button>
-            <button type="submit" class="btn btn-primary" @click="submitBook">Thêm</button>
+            <button type="submit" class="btn btn-primary">Thêm</button>
         </div>
     </Form>
 </template>
@@ -46,7 +46,7 @@
 <script>
     import * as yup from "yup";
     import { Form, Field, ErrorMessage } from "vee-validate";
-
+    import SachService from "@/services/sach.service";
     export default {
         components:{
             Form, Field, ErrorMessage
@@ -90,13 +90,44 @@
                     namXB: "",
                     soquyenSach: 0
                 },
+                duplicateWarning: "",
                 contactFormSchema,
             };
         },
         methods: {
-            submitBook() {
-                this.$emit("submit:book", this.Localbook);
+
+            // Kiểm tra trùng lặp mã sách real-time
+            async checkDuplicate() {
+                if (this.Localbook._id) {
+                    try {
+                        const existingBook = await SachService.get(this.Localbook._id);
+                        this.duplicateWarning = existingBook ? "Mã sách đã tồn tại!" : "";
+                    } catch (error) {
+                        this.duplicateWarning = "";
+                    }
+                } else {
+                    this.duplicateWarning = "";
+                }
             },
+
+            // Gửi dữ liệu sách lên backend nếu hợp lệ
+            async submitBook() {
+                this.checkDuplicate()
+
+                try {
+                    if (this.duplicateWarning) {
+                        alert("Mã sách đã tồn tại, vui lòng kiểm tra lại!");
+                    }else{
+                        await SachService.create(this.Localbook);
+                        alert("Thêm sách thành công!");
+                    }
+                } catch (error) {
+                    console.error("Lỗi khi thêm sách:", error);
+                }
+            },
+            // submitBook() {
+            //     this.$emit("submit:book", this.Localbook);
+            // },
         },
     };
 </script>

@@ -43,7 +43,7 @@
         </div>
         <div class="col-12">
             <button style="margin-right: 20px;" type="reset" class="btn btn-outline-success">Reset</button>
-            <button type="submit" class="btn btn-primary" @click="submitUser">Tạo</button>
+            <button type="submit" class="btn btn-primary">Tạo</button>
         </div>
     </Form>
 </template>
@@ -51,6 +51,7 @@
 <script>
     import * as yup from "yup";
     import { Form, Field, ErrorMessage } from "vee-validate";
+    import DocgiaService from "@/services/docgia.service";
     export default {
         components:{
             Form, Field, ErrorMessage
@@ -99,13 +100,39 @@
                     ngaysinhDG: "", 
                     gioitinhDG: "Nam"
                 },
+                duplicateWarning: "",
                 contactFormSchema,
             };
         },
         methods: {
+
+            async checkDuplicate() {
+                if (this.LocalUser._id) {
+                    try {
+                        const existingUser = await DocgiaService.get(this.LocalUser._id);
+                        if (existingUser) {
+                            this.duplicateWarning = "Mã độc giả đã tồn tại!";
+                        } else {
+                            this.duplicateWarning = "";
+                        }
+                    } catch (error) {
+                        this.duplicateWarning = "";
+                    }
+                }
+            },
+
             submitUser() {
+                this.checkDuplicate()
+                if (this.duplicateWarning) {
+                    alert("Mã đọc giả đã tồn tại, không thể thêm mới!");
+                    return;
+                }
                 this.$emit("submit:user", this.LocalUser);
             },
+
+            // submitUser() {
+            //     this.$emit("submit:user", this.LocalUser);
+            // },
 
         },
     };
